@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "API mitienda.pe",
+    'summary': "Módulo para sincronizar datos entre Odoo y la API mitienda.pe",
+    'description': """
+        Módulo para sincronizar datos entre Odoo y la API mitienda.pe
+    """,
+    'author': "DTE S.R.L.",
+    'website': "https://www.dte.com.bo",
+    'category': 'Sales/Sales',
+    'version': '0.0.1',
+    'depends': ['base'],
+    'data': [],
+    'demo': [],
+    'license': 'GPL-3',
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}
