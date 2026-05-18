@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_root"
+        name="MiTienda.pe"
+        web_icon="api_mitienda_peru,static/description/icon.png"
+        active="True" />
+
+    <menuitem id="menu_root_configuracion"
+        name="Configuración"
+        parent="api_mitienda_peru.menu_root"
+        sequence="10"
+        active="True" />
+
+    <menuitem id="parametro_conexion"
+        name="Parámetros de conexión"
+        parent="api_mitienda_peru.menu_root_configuracion"
+        sequence="10"
+        action="api_mitienda_peru.action_mi_tienda_pe_conexion" />
+</odoo>
