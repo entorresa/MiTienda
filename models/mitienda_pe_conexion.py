@@ -25,3 +25,14 @@ class MiTiendaPeConexion(models.Model):
                                         default="factura_publicada",
                                         string='Lógica de sincronización',
                                         required=True)
+
+    @api.model
+    def create(self, vals):
+        if vals.get('url'):
+            vals['url'] = vals['url'].rstrip('/')
+        return super().create(vals)
+
+    def write(self, vals):
+        if vals.get('url'):
+            vals['url'] = vals['url'].rstrip('/')
+        return super().write(vals)
