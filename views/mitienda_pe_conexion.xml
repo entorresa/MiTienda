@@ -6,6 +6,12 @@
             <field name="model">mitienda.pe.conexion</field>
             <field name="arch" type="xml">
                 <form>
+                    <div>
+                        <div class="alert alert-info" role="alert"
+                            invisible="not mensaje_sync_cliente">
+                            <field name="mensaje_sync_cliente" readonly="1" />
+                        </div>
+                    </div>
                     <sheet>
                         <group>
                             <group string="Parámetros de conexión">

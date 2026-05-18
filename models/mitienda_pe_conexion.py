@@ -25,6 +25,7 @@ class MiTiendaPeConexion(models.Model):
                                         default="factura_publicada",
                                         string='Lógica de sincronización',
                                         required=True)
+    mensaje_sync_cliente = fields.Char(string="mensaje", compute='_mensaje_sync_cliente')
 
     @api.model
     def create(self, vals):
@@ -45,6 +46,14 @@ class MiTiendaPeConexion(models.Model):
             conexiones = self.search([('id', '!=', record.id)])
             if record.activo and len(conexiones)>0:
                 conexiones.write({'activo': False})
+
+    @api.depends('sync_cliente_logica')
+    def _mensaje_sync_cliente(self):
+        for record in self:
+            if record.sync_cliente_logica and record.sync_cliente_logica == 'registrar_nuevo':
+                record.mensaje_sync_cliente = 'Se registran nuevos clientes tomando como base los datos de nombre, apellido, teléfono y correo electrónico'
+            else:
+                record.mensaje_sync_cliente = None
 
     def probar_conexion(self):
         return True
