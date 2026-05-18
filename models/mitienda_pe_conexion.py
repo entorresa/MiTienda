@@ -58,3 +58,8 @@ class MiTiendaPeConexion(models.Model):
     def probar_conexion(self):
         return True
 
+    def unlink(self):
+        for record in self:
+            if record.activo:
+                raise ValidationError("No se puede eliminar un registro en estado activo")
+        return super().unlink()
