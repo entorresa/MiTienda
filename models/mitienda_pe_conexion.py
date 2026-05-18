@@ -17,7 +17,7 @@ class MiTiendaPeConexion(models.Model):
     sync_cliente_logica = fields.Selection(string='Lógica de sincronización', required=True,
                                         selection=[('registrar_nuevo', 'Registrar nuevos clientes'),
                                                     ('cliente_predefinido', 'Usar cliente predefinido')], default='registrar_nuevo')
-    sync_cliente_predefinido = fields.Many2one(comodel_name='res.partner', string='Cliente predefinido', required=True, domain="[('company_id','=', company_id)]")
+    sync_cliente_predefinido = fields.Many2one(comodel_name='res.partner', string='Cliente predefinido', domain="[('company_id','=', company_id)]")
     sync_venta_logica = fields.Selection(selection=[('cotizacion', 'Registrar cotizaciones'),
                                                     ('venta', 'Registrar ventas'),
                                                     ('factura_borrador', 'Registrar ventas y facturas en borrador'),

@@ -14,17 +14,19 @@
                                 <field name="token" />
                                 <field name="token_expiracion" />
                                 <field name="timeout_api" />
-                                <field name="activo" />
+                                <field name="activo" widget="boolean_toggle" />
                             </group>
                             <group>
-                                <group string="Sincronización de clientes">
+                                <group colspan="2" string="Sincronización de clientes">
                                     <field name="sync_cliente_logica" />
-                                    <field name="sync_cliente_predefinido" />
+                                    <field name="sync_cliente_predefinido"
+                                        required="sync_cliente_logica == 'cliente_predefinido'"
+                                        invisible="sync_cliente_logica != 'cliente_predefinido'" />
                                 </group>
-                                <group string="Sincronización de ventas">
-                                    <field name="sync_cliente_logica" />
+                                <group colspan="2" string="Sincronización de ventas">
+                                    <field name="sync_venta_logica" />
                                 </group>
-                                <group string="Sincronización de productos">
+                                <group colspan="2" string="Sincronización de productos">
                                     <field name="sync_cliente_logica" />
                                 </group>
                             </group>
@@ -44,7 +46,7 @@
                     <field name="token_expiracion" />
                     <field name="token_header" />
                     <field name="timeout_api" />
-                    <field name="activo" />
+                    <field name="activo" widget="boolean_toggle" />
                 </list>
             </field>
         </record>
