@@ -36,3 +36,16 @@ class MiTiendaPeConexion(models.Model):
         if vals.get('url'):
             vals['url'] = vals['url'].rstrip('/')
         return super().write(vals)
+
+    @api.constrains('timeout_api', 'activo')
+    def validacion(self):
+        for record in self:
+            if record.timeout_api <= 0:
+                raise ValidationError("Timeout HTTP debe ser mayor a 0")
+            conexiones = self.search([('id', '!=', record.id)])
+            if record.activo and len(conexiones)>0:
+                conexiones.write({'activo': False})
+
+    def probar_conexion(self):
+        return True
+
