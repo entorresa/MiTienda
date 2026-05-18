@@ -21,6 +21,9 @@
                                 <field name="token_expiracion" />
                                 <field name="timeout_api" />
                                 <field name="activo" widget="boolean_toggle" />
+                                <button name="probar_conexion" string="Probar conexión" type="object"
+                                    invisible="id == False" class="btn btn-primary">
+                                </button>
                             </group>
                             <group>
                                 <group colspan="2" string="Sincronización de clientes">
