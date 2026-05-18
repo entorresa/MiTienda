@@ -40,7 +40,7 @@
             <field name="name">mitienda.pe.conexion.list</field>
             <field name="model">mitienda.pe.conexion</field>
             <field name="arch" type="xml">
-                <list string="conexion api">
+                <list string="conexion api" edit="False">
                     <field name="url" />
                     <field name="entorno" />
                     <field name="token_expiracion" />
