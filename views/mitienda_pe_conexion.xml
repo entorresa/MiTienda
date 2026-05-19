@@ -20,6 +20,7 @@
                                 <field name="token" />
                                 <field name="token_expiracion" />
                                 <field name="timeout_api" />
+                                <field name="token_header" />
                                 <field name="activo" widget="boolean_toggle" />
                                 <button name="probar_conexion" string="Probar conexión" type="object"
                                     invisible="id == False" class="btn btn-primary">
@@ -35,9 +36,9 @@
                                 <group colspan="2" string="Sincronización de ventas">
                                     <field name="sync_venta_logica" />
                                 </group>
-                                <group colspan="2" string="Sincronización de productos">
+                                <!-- <group colspan="2" string="Sincronización de productos">
                                     <field name="sync_cliente_logica" />
-                                </group>
+                                </group> -->
                             </group>
                         </group>
                     </sheet>
