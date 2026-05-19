@@ -40,3 +40,9 @@ class MiTiendaPeSaleOrder(models.Model):
         selection=[('0','Rechazado'),('1', 'Aprobado'),('2', 'Pendiente')])
     mitienda_sunat_pdf = fields.Char(string='Factura SUNAT')
     mitienda_partner_id = fields.Many2one(string="Cliente MiTienda", comodel_name="mitienda.pe.partner")
+
+    def unlink(self):
+        for record in self:
+            if record:
+                raise ValidationError("No puede eliminar un registro")
+        return super().unlink()
