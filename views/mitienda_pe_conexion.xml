@@ -51,8 +51,7 @@
             <field name="model">mitienda.pe.conexion</field>
             <field name="arch" type="xml">
                 <list string="conexion api" edit="False">
-                    <field name="url" />
-                    <field name="entorno" />
+                    <field name="name" />
                     <field name="token_expiracion" />
                     <field name="token_header" />
                     <field name="timeout_api" />
