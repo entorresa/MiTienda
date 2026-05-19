@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_api_mitienda_peru,access_api_mitienda_peru,model_mitienda_pe_conexion,base.group_user,1,1,1,1
+access_api_mitienda_partner,access_api_mitienda_partner,model_mitienda_pe_partner,base.group_user,1,1,1,1
+access_api_mitienda_sale_order,access_api_mitienda_sale_order,model_mitienda_pe_sale_order,base.group_user,1,1,1,1
