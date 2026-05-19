@@ -13,6 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/mitienda_pe_conexion.xml',
+        'views/mitienda_pe_partner.xml',
         'views/menu.xml',
         ],
     'demo': [],
