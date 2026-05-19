@@ -9,7 +9,7 @@
     'website': "https://www.dte.com.bo",
     'category': 'Sales/Sales',
     'version': '0.0.1',
-    'depends': ['base','sale'],
+    'depends': ['base', 'sale_management'],
     'data': [
         'security/ir.model.access.csv',
         'views/mitienda_pe_conexion.xml',
