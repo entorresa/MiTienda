@@ -16,3 +16,9 @@ class MiTiendaPePartner(models.Model):
     mitienda_last_name = fields.Char(string="Apellidos")
     mitienda_email = fields.Char(string="Correo electrónico")
     mitienda_doc_number = fields.Char(string="Documento")
+
+    def unlink(self):
+        for record in self:
+            if record:
+                raise ValidationError("No puede eliminar un registro")
+        return super().unlink()
