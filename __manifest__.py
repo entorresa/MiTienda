@@ -16,6 +16,7 @@
         'views/mitienda_pe_partner.xml',
         'views/mitienda_pe_sale_order.xml',
         'views/sale_order.xml',
+        'views/product_product.xml',
         'views/menu.xml',
         ],
     'demo': [],
