@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="dte_view_form_sale_order_inherit" model="ir.ui.view">
+            <field name="name">dte_view_form_sale_order_inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook//page[@name='other_information']" position="after">
+                    <page name="mitienda_pe" string="MiTienda.pe">
+                        <group name="datos_tienda_pe">
+                            <field name="mitienda_id"  readonly="1"/>
+                            <field name="mitienda_code"  readonly="1"/>
+                            <field name="mitienda_sunat_pdf" widget='url'  readonly="1"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
