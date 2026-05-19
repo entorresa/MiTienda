@@ -30,7 +30,8 @@ class MiTiendaPePartner(models.Model):
             'type': 'ir.actions.act_window',
             'view_mode': 'list,form',
             'res_model': 'mitienda.pe.sale.order',
-            'domain': [('id', 'in', self.mitienda_sale_order_ids.ids)]
+            'domain': [('id', 'in', self.mitienda_sale_order_ids.ids)],
+            'context': {'create': False, 'edit': False},
         }
 
     def unlink(self):
