@@ -1,6 +1,6 @@
 from odoo import api, models, fields
 from odoo.exceptions import ValidationError
-
+from ..services.request_api_mitienda import RequestApiMiTienda
 
 class MiTiendaPeConexion(models.Model):
     _name = "mitienda.pe.conexion"
@@ -88,7 +88,7 @@ class MiTiendaPeConexion(models.Model):
                 record.mensaje_sync_cliente = None
 
     def probar_conexion(self):
-        return True
+        return RequestApiMiTienda(self.env).probar_conexion()
 
     def unlink(self):
         for record in self:
