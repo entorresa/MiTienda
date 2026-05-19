@@ -9,11 +9,15 @@
     'website': "https://www.dte.com.bo",
     'category': 'Sales/Sales',
     'version': '0.0.1',
-    'depends': ['base'],
-    'data': [],
+    'depends': ['base','sale'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/mitienda_pe_conexion.xml',
+        'views/menu.xml',
+        ],
     'demo': [],
     'license': 'GPL-3',
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
 }
