@@ -4,28 +4,60 @@ from odoo.exceptions import ValidationError
 
 class MiTiendaPeConexion(models.Model):
     _name = "mitienda.pe.conexion"
-    _rec_name = 'url'
 
+    name = fields.Char(string='Conexión', compute='_compute_name', store=False)
     url = fields.Char(string='API Host', required=True, default="https://api.mitienda.pe/v1")
-    entorno = fields.Selection(string='Entorno', selection=[('pruebas', 'Pruebas'), ('produccion', 'Producción')], default='pruebas', required=True)
+    entorno = fields.Selection(
+        string='Entorno',
+        selection=[
+            ('pruebas', 'Pruebas'),
+            ('produccion', 'Producción'),
+        ],
+        default='pruebas',
+        required=True,
+    )
     token = fields.Char(string='Token API', required=True)
     token_expiracion = fields.Date(string='Expiración token')
-    token_header = fields.Selection(string='Tipo de autenticación', selection=[('bearer', 'Bearer'), ('legacy', 'Lagacy')], default='bearer')
+    token_header = fields.Selection(
+        string='Tipo de autenticación',
+        selection=[
+            ('bearer', 'Bearer'),
+            ('legacy', 'Lagacy'),
+        ],
+        default='bearer',
+        required=True,
+    )
     timeout_api = fields.Integer(string='Timeout HTTP', required=True, default=30)
     activo = fields.Boolean(string='Activo', default=True)
     company_id = fields.Many2one(string='Compañía', comodel_name='res.company', default=lambda self: self.env.company.id, required=True)
-    sync_cliente_logica = fields.Selection(string='Lógica de sincronización', required=True,
-                                        selection=[('registrar_nuevo', 'Registrar nuevos clientes'),
-                                                    ('cliente_predefinido', 'Usar cliente predefinido')], default='registrar_nuevo')
+    sync_cliente_logica = fields.Selection(
+        string='Lógica de sincronización',
+        required=True,
+        selection=[
+            ('registrar_nuevo', 'Registrar nuevos clientes'),
+            ('cliente_predefinido', 'Usar cliente predefinido'),
+        ],
+        default='registrar_nuevo'
+    )
     sync_cliente_predefinido = fields.Many2one(comodel_name='res.partner', string='Cliente predefinido', domain="[('company_id','=', company_id)]")
-    sync_venta_logica = fields.Selection(selection=[('cotizacion', 'Registrar cotizaciones'),
-                                                    ('venta', 'Registrar ventas'),
-                                                    ('factura_borrador', 'Registrar ventas y facturas en borrador'),
-                                                    ('factura_publicada', 'Registrar ventas y facturas publicadas')],
-                                        default="factura_publicada",
-                                        string='Lógica de sincronización',
-                                        required=True)
-    mensaje_sync_cliente = fields.Char(string="mensaje", compute='_mensaje_sync_cliente')
+    sync_venta_logica = fields.Selection(
+        selection=[
+            ('cotizacion', 'Registrar cotizaciones'),
+            ('venta', 'Registrar ventas'),
+            ('factura_borrador', 'Registrar ventas y facturas en borrador'),
+            ('factura_publicada', 'Registrar ventas y facturas publicadas'),
+        ],
+        default="factura_publicada",
+        string='Lógica de sincronización',
+        required=True,
+    )
+    mensaje_sync_cliente = fields.Char(string="mensaje", compute='_mensaje_sync_cliente', store=False)
+
+    @api.depends('url', 'entorno')
+    def _compute_name(self):
+        for record in self:
+            entorno = dict(self._fields['entorno'].selection).get(record.entorno)
+            record.name = f'{entorno} - {record.url}'
 
     @api.model
     def create(self, vals):
@@ -51,7 +83,7 @@ class MiTiendaPeConexion(models.Model):
     def _mensaje_sync_cliente(self):
         for record in self:
             if record.sync_cliente_logica and record.sync_cliente_logica == 'registrar_nuevo':
-                record.mensaje_sync_cliente = 'Se registran nuevos clientes tomando como base los datos de nombre, apellido, teléfono y correo electrónico'
+                record.mensaje_sync_cliente = 'Se registran nuevos clientes tomando como base los datos de correo electrónico y número de documento'
             else:
                 record.mensaje_sync_cliente = None
 
