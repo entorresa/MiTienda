@@ -8,17 +8,17 @@
                 <form>
                     <sheet>
                         <group>
-                            <group string="Clientes">
+                            <group string="Sincronización">
                                 <field name="fecha_sincronizacion" />
                                 <field name="conexion_id" />
+                                <field name="company_id" invisible="1"/>
+                            </group>
+                            <group string="Clientes">
                                 <field name="partner_id" />
                                 <field name="mitienda_name" />
                                 <field name="mitienda_last_name" />
                                 <field name="mitienda_email" />
                                 <field name="mitienda_doc_number" />
-                                <field name="company_id" invisible="1"/>
-                            </group>
-                            <group>
                             </group>
                         </group>
                     </sheet>
@@ -38,7 +38,7 @@
                     <field name="mitienda_last_name" />
                     <field name="mitienda_email" />
                     <field name="mitienda_doc_number" />
-                    <field name="company_id" optionals="hide"/>
+                    <field name="company_id" optional="hide"/>
                 </list>
             </field>
         </record>

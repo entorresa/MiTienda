@@ -6,15 +6,29 @@
         web_icon="api_mitienda_peru,static/description/icon.png"
         active="True" />
 
-    <menuitem id="menu_root_configuracion"
-        name="Configuración"
+    <menuitem id="menu_root_bitacora"
+        name="Bitácora"
         parent="api_mitienda_peru.menu_root"
         sequence="10"
         active="True" />
 
+    <menuitem id="menu_root_configuracion"
+        name="Configuración"
+        parent="api_mitienda_peru.menu_root"
+        sequence="50"
+        active="True" />
+
+    <!-- submenus de configuracion -->
     <menuitem id="parametro_conexion"
         name="Parámetros de conexión"
         parent="api_mitienda_peru.menu_root_configuracion"
         sequence="10"
         action="api_mitienda_peru.action_mi_tienda_pe_conexion" />
+
+    <!-- Submenus de bitacora -->
+    <menuitem id="bitacora_clientes"
+        name="Clientes"
+        parent="api_mitienda_peru.menu_root_bitacora"
+        sequence="10"
+        action="api_mitienda_peru.action_mi_tienda_pe_partner" />
 </odoo>
