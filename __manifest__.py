@@ -14,6 +14,7 @@
         'security/ir.model.access.csv',
         'views/mitienda_pe_conexion.xml',
         'views/mitienda_pe_partner.xml',
+        'views/mitienda_pe_sale_order.xml',
         'views/menu.xml',
         ],
     'demo': [],
