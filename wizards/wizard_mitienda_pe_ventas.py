@@ -12,5 +12,11 @@ class WizardMiTiendaPeVentas(models.TransientModel):
     url = fields.Char(string='API Host', related='conexion_id.url', readonly=True)
     entorno = fields.Selection(string='Entorno', related='conexion_id.entorno', readonly=True)
 
+    @api.constrains('fecha_inicio', 'fecha_fin')
+    def validar(self):
+        for record in self:
+            if record.fecha_fin and record.fecha_inicio and record.fecha_fin < record.fecha_inicio:
+                raise ValidationError("Fecha inicio no debe superar a fecha fin")
+
     def sincronizar(self):
         return True
