@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="dte_view_form_res_partner_inherit" model="ir.ui.view">
+            <field name="name">dte_view_form_res_partner_inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook//page[@name='internal_notes']" position="after">
+                    <page name="mitienda_pe" string="MiTienda.pe">
+                        <group name="datos_tienda_pe">
+                            <group>
+                                <field name="mitienda_id" invisible="1" />
+                                <field name="mitienda_email" />
+                            </group>
+                            <group>
+                                <field name="mitienda_doc_number" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
