@@ -1,4 +1,4 @@
-from odoo import api, models, fields
+from odoo import api, models, fields, Command
 from odoo.exceptions import ValidationError
 from ..services.request_api_mitienda import RequestApiMiTienda
 from pprint import pp
@@ -22,6 +22,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
         # Llamar a buscar_ventas con los parámetros fecha_inicio y fecha_fin
         respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
         ventas_api_codes = []
+        print("sincronizando..................................")
         pp(respuesta)
         if len(respuesta['data']) > 0:
             for data in respuesta['data']:
@@ -47,7 +48,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                         })
                         # registra en bitacora de clientes
-                        obj_cliente_bitacora = self.env['mitienda.pe.partner'].create({
+                        self.env['mitienda.pe.partner'].create({
                             'conexion_id': self.conexion_id.id,
                             'fecha_sincronizacion': fields.Datetime.now,
                             'company_id': self.env.company.id,
@@ -58,13 +59,22 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                         })
                     skus_inexistentes = []
+                    productos = []
                     for item in respuesta['data']['items']:
                         obj_producto = self.buscar_producto(id=item['id'], sku=item['sku'])
                         if not obj_producto:
                             skus_inexistentes.append(item['sku'])
+                        else:
+                            productos.append({
+                                'product_id': obj_producto.id,
+                                'product_uom_qty' : item['quantity'],
+                                'tax_id':[Command.clear()],
+                                'discount':0,
+                                'price_unit': item['unit_price']
+                            })
                             # registrar bitacora
                     if len(skus_inexistentes)>0:
-                            obj_venta_bitacora = self.env['mitienda.pe.sale.order'].create({
+                            self.env['mitienda.pe.sale.order'].create({
                                 'conexion_id': self.conexion_id.id,
                                 'fecha_sincronizacion': fields.Datetime.now,
                                 'fecha_venta': respuesta['data']['date_created'],
@@ -82,6 +92,47 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                                 'mitienda_sunat_pdf': None,
                                 'mitienda_partner_id': respuesta['data']['customer']['id']
                             })
+                    else:
+                        obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente=obj_cliente.id, productos=productos)
+                        if obj_venta:
+                            # Registrar bitacora de ventas
+                            self.env['mitienda.pe.sale.order'].create({
+                                'conexion_id': self.conexion_id.id,
+                                'fecha_sincronizacion': fields.Datetime.now,
+                                'fecha_venta': respuesta['data']['date_created'],
+                                'mensaje': f"Sincronizada venta: #{respuesta['data']['code']}",
+                                'sale_order_id': obj_venta.id,
+                                'partner_id': obj_venta.partner_id.id,
+                                'error': False,
+                                'company_id': self.env.company,
+                                'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
+                                'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
+                                'sync_venta_logica': self.conexion_id.sync_venta_logica,
+                                'mitienda_order_code': respuesta['data']['code'],
+                                'mitienda_order_id': respuesta['data']['id'],
+                                'mitienda_order_status': respuesta['data']['status'],
+                                'mitienda_sunat_pdf': None,
+                                'mitienda_partner_id': respuesta['data']['customer']['id']
+                            })
+                else:
+                    self.env['mitienda.pe.sale.order'].create({
+                        'conexion_id': self.conexion_id.id,
+                        'fecha_sincronizacion': fields.Datetime.now,
+                        'fecha_venta': None,
+                        'mensaje': respuesta['error']['message'],
+                        'sale_order_id': None,
+                        'partner_id': None,
+                        'error': True,
+                        'company_id': self.env.company,
+                        'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
+                        'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
+                        'sync_venta_logica': self.conexion_id.sync_venta_logica,
+                        'mitienda_order_code': None,
+                        'mitienda_order_id': None,
+                        'mitienda_order_status': None,
+                        'mitienda_sunat_pdf': None,
+                        'mitienda_partner_id': None
+                    })
         return False
 
     def buscar_cliente(self, id, email, doc_number):
@@ -95,6 +146,18 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                 'mitienda_id': id
             })
         return obj_producto
+
+    def buscar_venta(self, id, code, cliente, productos):
+        obj_venta = self.env['sale.order'].search([('mitienda_id','=', id)])
+        if not obj_venta:
+            obj_venta = self.env['sale.order'].create({
+                'partner_id':cliente.id,
+                'mitienda_id':id,
+                'mitienda_code': code,
+                'mitienda_sunat_pdf': False
+            })
+            obj_venta.order_lines= [Command.create(productos)]
+        return obj_venta
 
     @api.onchange('conexion_id')
     def conexion_onchange(self):
