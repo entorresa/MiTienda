@@ -40,7 +40,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                 pp(respuesta)
                 if respuesta['success'] is True:
                     # verificar si existe cliente
-                    obj_cliente = self.buscar_cliente(id=respuesta['data']['customer']['id'], email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
+                    obj_cliente = self.buscar_cliente(id=respuesta['data']['customer'].get('id'), email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
                     obj_bitacora_cliente = self.env['mitienda.pe.partner']
                     if not obj_cliente:
                         # registra nuevo cliente
@@ -48,7 +48,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             'name': f"{respuesta['data']['billing_info']['name']} {respuesta['data']['billing_info']['last_name']}",
                             'email': respuesta['data']['billing_info']['email'],
                             'vat': respuesta['data']['billing_info']['doc_number'],
-                            'mitienda_id': respuesta['data']['customer']['id'],
+                            'mitienda_id': respuesta['data']['customer'].get('id'),
                             'mitienda_email': respuesta['data']['billing_info']['email'],
                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                         })
@@ -94,11 +94,33 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                     self.registrar_bitacora_venta(mensaje=respuesta['error']['message'], error=True)
 
     def buscar_cliente(self, id, email, doc_number):
-        obj_cliente = self.env['res.partner'].search(['|','|',('mitienda_id', '=', id), ('mitienda_email', '=', email), ('mitienda_doc_number','=', doc_number)])
+        domain=[]
+        operador=[]
+        if id:
+            domain.append(('mitienda_id', '=', id))
+        if email:
+            domain.append(('mitienda_email', '=', email))
+        if doc_number:
+            domain.append(('mitienda_doc_number', '=', doc_number))
+        if len(domain) == 3:
+            operador.extend(['|', '|'])
+        elif len(domain) == 2:
+            operador.append('|')
+        domain= operador+domain
+        obj_cliente = self.env['res.partner'].search(domain)
         return obj_cliente
 
     def buscar_producto(self, id, sku):
-        obj_producto = self.env['product.product'].search(['|', ('mitienda_id', '=', id), ('mitienda_sku', '=', sku)])
+        domain = []
+        operador = []
+        if id:
+            domain.append(('mitienda_id', '=', id))
+        if sku:
+            domain.append(('mitienda_sku', '=', sku))
+        if len(domain) == 2:
+            operador.append('|')
+        domain = operador+domain
+        obj_producto = self.env['product.product'].search(domain)
         if obj_producto and not obj_producto.mitienda_id or obj_producto.mitienda_id == 0:
             obj_producto.write({
                 'mitienda_id': id

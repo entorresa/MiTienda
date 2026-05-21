@@ -37,7 +37,7 @@ class MiTiendaPeSaleOrder(models.Model):
     mitienda_order_code = fields.Char(string='Código MiTienda')
     mitienda_order_id = fields.Integer(string='ID MiTienda')
     mitienda_order_status = fields.Selection(string="Estado MiTienda",
-        selection=[('0','Rechazado'),('1', 'Aprobado'),('2', 'Pendiente')])
+        selection=[('0','Rechazado'),('1', 'Aprobado'),('2', 'Pendiente'),('9', 'Creado')])
     mitienda_sunat_pdf = fields.Char(string='Factura SUNAT')
     mitienda_partner_id = fields.Many2one(string="Cliente MiTienda", comodel_name="mitienda.pe.partner", ondelete="set null")
 
