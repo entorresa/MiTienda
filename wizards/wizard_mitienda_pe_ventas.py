@@ -27,16 +27,21 @@ class WizardMiTiendaPeVentas(models.TransientModel):
         if len(respuesta['data']) > 0:
             for data in respuesta['data']:
                 # Buscar ventas sale.order
+                print("datta,", data['code'], data)
                 obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
                 if not obj_venta:
-                    ventas_api_codes += data['code']
+                    ventas_api_codes.append(data['code'])
         # Para cada code llamar a buscar_venta pasando el parámetro code
+        print("ventas no registradas", ventas_api_codes)
         if len(ventas_api_codes) > 0:
             for venta_code in ventas_api_codes:
                 respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
-                if respuesta['success'] == True:
+                print("sincronizando........ssss..........................")
+                pp(respuesta)
+                if respuesta['success'] is True:
                     # verificar si existe cliente
                     obj_cliente = self.buscar_cliente(id=respuesta['data']['customer']['id'], email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
+                    obj_bitacora_cliente = self.env['mitienda.pe.partner']
                     if not obj_cliente:
                         # registra nuevo cliente
                         obj_cliente = self.env['res.partner'].create({
@@ -48,16 +53,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                         })
                         # registra en bitacora de clientes
-                        self.env['mitienda.pe.partner'].create({
-                            'conexion_id': self.conexion_id.id,
-                            'fecha_sincronizacion': fields.Datetime.now,
-                            'company_id': self.env.company.id,
-                            'partner_id': obj_cliente.id,
-                            'mitienda_name': respuesta['data']['billing_info']['name'],
-                            'mitienda_last_name': respuesta['data']['billing_info']['last_name'],
-                            'mitienda_email': respuesta['data']['billing_info']['email'],
-                            'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
-                        })
+                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
                     skus_inexistentes = []
                     productos = []
                     for item in respuesta['data']['items']:
@@ -74,66 +70,28 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             })
                             # registrar bitacora
                     if len(skus_inexistentes)>0:
-                            self.env['mitienda.pe.sale.order'].create({
-                                'conexion_id': self.conexion_id.id,
-                                'fecha_sincronizacion': fields.Datetime.now,
-                                'fecha_venta': respuesta['data']['date_created'],
-                                'mensaje': f"No se pudo sincronizar la venta debido a la inexistencia de SKU: {', '.join(skus_inexistentes)}",
-                                'sale_order_id': None,
-                                'partner_id': obj_cliente.id,
-                                'error': True,
-                                'company_id': self.env.company,
-                                'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
-                                'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
-                                'sync_venta_logica': self.conexion_id.sync_venta_logica,
-                                'mitienda_order_code': respuesta['data']['code'],
-                                'mitienda_order_id': respuesta['data']['id'],
-                                'mitienda_order_status': respuesta['data']['status'],
-                                'mitienda_sunat_pdf': None,
-                                'mitienda_partner_id': respuesta['data']['customer']['id']
-                            })
+                        self.registrar_bitacora_venta(fecha_venta=respuesta['data']['date_created'],
+                                                        mensaje=f"No se pudo sincronizar la venta debido a la inexistencia de SKU: {', '.join(skus_inexistentes)}",
+                                                        partner_id=obj_cliente.id,
+                                                        error=True,
+                                                        mitienda_order_code=respuesta['data']['code'],
+                                                        mitienda_order_id=respuesta['data']['id'],
+                                                        status=respuesta['data']['status'],
+                                                        mitienda_partner_id=obj_bitacora_cliente.id)
                     else:
                         obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente=obj_cliente.id, productos=productos)
                         if obj_venta:
                             # Registrar bitacora de ventas
-                            self.env['mitienda.pe.sale.order'].create({
-                                'conexion_id': self.conexion_id.id,
-                                'fecha_sincronizacion': fields.Datetime.now,
-                                'fecha_venta': respuesta['data']['date_created'],
-                                'mensaje': f"Sincronizada venta: #{respuesta['data']['code']}",
-                                'sale_order_id': obj_venta.id,
-                                'partner_id': obj_venta.partner_id.id,
-                                'error': False,
-                                'company_id': self.env.company,
-                                'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
-                                'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
-                                'sync_venta_logica': self.conexion_id.sync_venta_logica,
-                                'mitienda_order_code': respuesta['data']['code'],
-                                'mitienda_order_id': respuesta['data']['id'],
-                                'mitienda_order_status': respuesta['data']['status'],
-                                'mitienda_sunat_pdf': None,
-                                'mitienda_partner_id': respuesta['data']['customer']['id']
-                            })
+                            self.registrar_bitacora_venta(fecha_venta=respuesta['data']['date_created'],
+                                                        mensaje=f"Sincronizada venta: {respuesta['data']['code']}",
+                                                        sale_order_id=obj_venta.id,
+                                                        partner_id=obj_venta.partner_id.id,
+                                                        mitienda_order_code=respuesta['data']['code'],
+                                                        mitienda_order_id=respuesta['data']['id'],
+                                                        status=respuesta['data']['status'],
+                                                        mitienda_partner_id=obj_bitacora_cliente.id)
                 else:
-                    self.env['mitienda.pe.sale.order'].create({
-                        'conexion_id': self.conexion_id.id,
-                        'fecha_sincronizacion': fields.Datetime.now,
-                        'fecha_venta': None,
-                        'mensaje': respuesta['error']['message'],
-                        'sale_order_id': None,
-                        'partner_id': None,
-                        'error': True,
-                        'company_id': self.env.company,
-                        'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
-                        'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
-                        'sync_venta_logica': self.conexion_id.sync_venta_logica,
-                        'mitienda_order_code': None,
-                        'mitienda_order_id': None,
-                        'mitienda_order_status': None,
-                        'mitienda_sunat_pdf': None,
-                        'mitienda_partner_id': None
-                    })
-        return False
+                    self.registrar_bitacora_venta(mensaje=respuesta['error']['message'], error=True)
 
     def buscar_cliente(self, id, email, doc_number):
         obj_cliente = self.env['res.partner'].search(['|','|',('mitienda_id', '=', id), ('mitienda_email', '=', email), ('mitienda_doc_number','=', doc_number)])
@@ -158,6 +116,38 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             })
             obj_venta.order_lines= [Command.create(productos)]
         return obj_venta
+
+    def registrar_bitacora_cliente(self, respuesta, obj_cliente):
+        obj_bitacora_cliente = self.env['mitienda.pe.partner'].create({
+            'conexion_id': self.conexion_id.id,
+            'fecha_sincronizacion': fields.Datetime.now(),
+            'company_id': self.env.company.id,
+            'partner_id': obj_cliente.id,
+            'mitienda_name': respuesta['data']['billing_info']['name'],
+            'mitienda_last_name': respuesta['data']['billing_info']['last_name'],
+            'mitienda_email': respuesta['data']['billing_info']['email'],
+            'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
+        })
+        return obj_bitacora_cliente
+    def registrar_bitacora_venta(self, fecha_venta=None, mensaje=None, sale_order_id=None, partner_id=None, error=False, mitienda_order_code=None, mitienda_order_id=None, status=None, pdf=None, mitienda_partner_id=None):
+        self.env['mitienda.pe.sale.order'].create({
+            'conexion_id': self.conexion_id.id,
+            'fecha_sincronizacion': fields.Datetime.now(),
+            'fecha_venta': fecha_venta,
+            'mensaje': mensaje,
+            'sale_order_id': sale_order_id,
+            'partner_id': partner_id,
+            'error': error,
+            'company_id': self.env.company.id,
+            'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
+            'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
+            'sync_venta_logica': self.conexion_id.sync_venta_logica,
+            'mitienda_order_code': mitienda_order_code,
+            'mitienda_order_id': mitienda_order_id,
+            'mitienda_order_status': str(status) if status else status,
+            'mitienda_sunat_pdf': pdf,
+            'mitienda_partner_id': mitienda_partner_id
+        })
 
     @api.onchange('conexion_id')
     def conexion_onchange(self):

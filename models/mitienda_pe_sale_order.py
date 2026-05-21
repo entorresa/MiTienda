@@ -12,8 +12,8 @@ class MiTiendaPeSaleOrder(models.Model):
     fecha_sincronizacion = fields.Datetime(string="Fecha de sincronización", required=True, default=fields.Datetime.now)
     fecha_venta = fields.Datetime(string='Fecha de venta')
     mensaje = fields.Char(string='Mensaje', required=True)
-    sale_order_id = fields.Many2one(string="Venta", comodel_name="sale.order")
-    partner_id = fields.Many2one(string="Cliente", comodel_name="res.partner")
+    sale_order_id = fields.Many2one(string="Venta", comodel_name="sale.order", ondelete="set null")
+    partner_id = fields.Many2one(string="Cliente", comodel_name="res.partner", ondelete="set null")
     error = fields.Boolean(string='Estado', default=True)
     company_id = fields.Many2one(string="Compañia", comodel_name="res.company", required=True, default=lambda self: self.env.company)
     sync_cliente_logica = fields.Selection(
@@ -39,7 +39,7 @@ class MiTiendaPeSaleOrder(models.Model):
     mitienda_order_status = fields.Selection(string="Estado MiTienda",
         selection=[('0','Rechazado'),('1', 'Aprobado'),('2', 'Pendiente')])
     mitienda_sunat_pdf = fields.Char(string='Factura SUNAT')
-    mitienda_partner_id = fields.Many2one(string="Cliente MiTienda", comodel_name="mitienda.pe.partner")
+    mitienda_partner_id = fields.Many2one(string="Cliente MiTienda", comodel_name="mitienda.pe.partner", ondelete="set null")
 
     def unlink(self):
         for record in self:
