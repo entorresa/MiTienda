@@ -18,15 +18,6 @@ class MiTiendaPeConexion(models.Model):
     )
     token = fields.Char(string='Token API', required=True)
     token_expiracion = fields.Date(string='Expiración token')
-    token_header = fields.Selection(
-        string='Tipo de autenticación',
-        selection=[
-            ('bearer', 'Bearer'),
-            ('legacy', 'Lagacy'),
-        ],
-        default='bearer',
-        required=True,
-    )
     timeout_api = fields.Integer(string='Timeout HTTP', required=True, default=30)
     activo = fields.Boolean(string='Activo', default=True)
     company_id = fields.Many2one(string='Compañía', comodel_name='res.company', default=lambda self: self.env.company.id, required=True)
