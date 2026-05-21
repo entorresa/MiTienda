@@ -57,10 +57,31 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             'mitienda_email': respuesta['data']['billing_info']['email'],
                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                         })
+                    skus_inexistentes = []
                     for item in respuesta['data']['items']:
                         obj_producto = self.buscar_producto(id=item['id'], sku=item['sku'])
                         if not obj_producto:
-                            # registrar producto
+                            skus_inexistentes.append(item['sku'])
+                            # registrar bitacora
+                    if len(skus_inexistentes)>0:
+                            obj_venta_bitacora = self.env['mitienda.pe.sale.order'].create({
+                                'conexion_id': self.conexion_id.id,
+                                'fecha_sincronizacion': fields.Datetime.now,
+                                'fecha_venta': respuesta['data']['date_created'],
+                                'mensaje': f"No se pudo sincronizar la venta debido a la inexistencia de SKU: {', '.join(skus_inexistentes)}",
+                                'sale_order_id': None,
+                                'partner_id': obj_cliente.id,
+                                'error': True,
+                                'company_id': self.env.company,
+                                'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
+                                'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
+                                'sync_venta_logica': self.conexion_id.sync_venta_logica,
+                                'mitienda_order_code': respuesta['data']['code'],
+                                'mitienda_order_id': respuesta['data']['id'],
+                                'mitienda_order_status': respuesta['data']['status'],
+                                'mitienda_sunat_pdf': None,
+                                'mitienda_partner_id': respuesta['data']['customer']['id']
+                            })
         return False
 
     def buscar_cliente(self, id, email, doc_number):
@@ -69,6 +90,10 @@ class WizardMiTiendaPeVentas(models.TransientModel):
 
     def buscar_producto(self, id, sku):
         obj_producto = self.env['product.product'].search(['|', ('mitienda_id', '=', id), ('mitienda_sku', '=', sku)])
+        if obj_producto and not obj_producto.mitienda_id or obj_producto.mitienda_id == 0:
+            obj_producto.write({
+                'mitienda_id': id
+            })
         return obj_producto
 
     @api.onchange('conexion_id')
