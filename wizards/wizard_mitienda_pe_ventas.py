@@ -1,7 +1,7 @@
 from odoo import api, models, fields, Command
 from odoo.exceptions import ValidationError
 from ..services.request_api_mitienda import RequestApiMiTienda
-from pprint import pp
+
 class WizardMiTiendaPeVentas(models.TransientModel):
     _name = "wizard.mitienda.pe.ventas"
     _description = "wizard sincronización manual de ventas"
@@ -20,78 +20,89 @@ class WizardMiTiendaPeVentas(models.TransientModel):
 
     def sincronizar(self):
         # Llamar a buscar_ventas con los parámetros fecha_inicio y fecha_fin
-        respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
-        ventas_api_codes = []
-        print("sincronizando..................................")
-        pp(respuesta)
-        if len(respuesta['data']) > 0:
-            for data in respuesta['data']:
-                # Buscar ventas sale.order
-                print("datta,", data['code'], data)
-                obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
-                if not obj_venta:
-                    ventas_api_codes.append(data['code'])
-        # Para cada code llamar a buscar_venta pasando el parámetro code
-        print("ventas no registradas", ventas_api_codes)
-        if len(ventas_api_codes) > 0:
-            for venta_code in ventas_api_codes:
-                respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
-                print("sincronizando........ssss..........................")
-                pp(respuesta)
-                if respuesta['success'] is True:
-                    # verificar si existe cliente
-                    obj_cliente = self.buscar_cliente(id=respuesta['data']['customer'].get('id'), email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
-                    obj_bitacora_cliente = self.env['mitienda.pe.partner']
-                    if not obj_cliente:
-                        # registra nuevo cliente
-                        obj_cliente = self.env['res.partner'].create({
-                            'name': f"{respuesta['data']['billing_info']['name']} {respuesta['data']['billing_info']['last_name']}",
-                            'email': respuesta['data']['billing_info']['email'],
-                            'vat': respuesta['data']['billing_info']['doc_number'],
-                            'mitienda_id': respuesta['data']['customer'].get('id'),
-                            'mitienda_email': respuesta['data']['billing_info']['email'],
-                            'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
-                        })
-                        # registra en bitacora de clientes
-                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
-                    skus_inexistentes = []
-                    productos = []
-                    for item in respuesta['data']['items']:
-                        obj_producto = self.buscar_producto(id=item['id'], sku=item['sku'])
-                        if not obj_producto:
-                            skus_inexistentes.append(item['sku'])
-                        else:
-                            productos.append({
-                                'product_id': obj_producto.id,
-                                'product_uom_qty' : item['quantity'],
-                                'tax_id':[Command.clear()],
-                                'discount':0,
-                                'price_unit': item['unit_price']
+        error = False
+        try:
+            respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
+            ventas_api_codes = []
+            if len(respuesta['data']) > 0:
+                for data in respuesta['data']:
+                    # Buscar ventas sale.order
+                    obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
+                    if not obj_venta:
+                        ventas_api_codes.append(data['code'])
+            # Para cada code llamar a buscar_venta pasando el parámetro code
+            if len(ventas_api_codes) > 0:
+                for venta_code in ventas_api_codes:
+                    respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
+                    if respuesta['success'] is True:
+                        # verificar si existe cliente
+                        obj_cliente = self.buscar_cliente(id=respuesta['data']['customer'].get('id'), email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
+                        obj_bitacora_cliente = self.env['mitienda.pe.partner']
+                        if not obj_cliente:
+                            # registra nuevo cliente
+                            obj_cliente = self.env['res.partner'].create({
+                                'name': f"{respuesta['data']['billing_info']['name']} {respuesta['data']['billing_info']['last_name']}",
+                                'email': respuesta['data']['billing_info']['email'],
+                                'vat': respuesta['data']['billing_info']['doc_number'],
+                                'mitienda_id': respuesta['data']['customer'].get('id'),
+                                'mitienda_email': respuesta['data']['billing_info']['email'],
+                                'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                             })
-                            # registrar bitacora
-                    if len(skus_inexistentes)>0:
-                        self.registrar_bitacora_venta(fecha_venta=respuesta['data']['date_created'],
-                                                        mensaje=f"No se pudo sincronizar la venta debido a la inexistencia de SKU: {', '.join(skus_inexistentes)}",
-                                                        partner_id=obj_cliente.id,
-                                                        error=True,
-                                                        mitienda_order_code=respuesta['data']['code'],
-                                                        mitienda_order_id=respuesta['data']['id'],
-                                                        status=respuesta['data']['status'],
-                                                        mitienda_partner_id=obj_bitacora_cliente.id)
-                    else:
-                        obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente_id=obj_cliente.id, productos=productos)
-                        if obj_venta:
-                            # Registrar bitacora de ventas
+                            # registra en bitacora de clientes
+                            obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
+                        skus_inexistentes = []
+                        productos = []
+                        for item in respuesta['data']['items']:
+                            obj_producto = self.buscar_producto(id=item['id'], sku=item['sku'])
+                            if not obj_producto:
+                                skus_inexistentes.append(item['sku'])
+                            else:
+                                productos.append({
+                                    'product_id': obj_producto.id,
+                                    'product_uom_qty' : item['quantity'],
+                                    'tax_id':[Command.clear()],
+                                    'discount':0,
+                                    'price_unit': item['unit_price']
+                                })
+                                # registrar bitacora
+                        if len(skus_inexistentes)>0:
                             self.registrar_bitacora_venta(fecha_venta=respuesta['data']['date_created'],
-                                                        mensaje=f"Sincronizada venta: {respuesta['data']['code']}",
-                                                        sale_order_id=obj_venta.id,
-                                                        partner_id=obj_venta.partner_id.id,
-                                                        mitienda_order_code=respuesta['data']['code'],
-                                                        mitienda_order_id=respuesta['data']['id'],
-                                                        status=respuesta['data']['status'],
-                                                        mitienda_partner_id=obj_bitacora_cliente.id)
-                else:
-                    self.registrar_bitacora_venta(mensaje=respuesta['error']['message'], error=True)
+                                                            mensaje=f"No se pudo sincronizar la venta debido a la inexistencia de SKU: {', '.join(skus_inexistentes)}",
+                                                            partner_id=obj_cliente.id,
+                                                            error=True,
+                                                            mitienda_order_code=respuesta['data']['code'],
+                                                            mitienda_order_id=respuesta['data']['id'],
+                                                            status=respuesta['data']['status'],
+                                                            mitienda_partner_id=obj_bitacora_cliente.id)
+                        else:
+                            obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente_id=obj_cliente.id, productos=productos)
+                            if obj_venta:
+                                # Registrar bitacora de ventas
+                                self.registrar_bitacora_venta(fecha_venta=respuesta['data']['date_created'],
+                                                            mensaje=f"Sincronizada venta: {respuesta['data']['code']}",
+                                                            sale_order_id=obj_venta.id,
+                                                            partner_id=obj_venta.partner_id.id,
+                                                            mitienda_order_code=respuesta['data']['code'],
+                                                            mitienda_order_id=respuesta['data']['id'],
+                                                            status=respuesta['data']['status'],
+                                                            mitienda_partner_id=obj_bitacora_cliente.id)
+                    else:
+                        self.registrar_bitacora_venta(mensaje=respuesta['error']['message'], error=True)
+        except Exception as e:
+            error = True
+            raise ValidationError(f"error en el proceso de soncronizacion: {str(e)}")
+        finally:
+            if not error:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Éxito',
+                        'message': "Sincronizacion éxitoso",
+                        'type': 'success',
+                        'sticky': False,
+                    },
+                }
 
     def buscar_cliente(self, id, email, doc_number):
         domain=[]
