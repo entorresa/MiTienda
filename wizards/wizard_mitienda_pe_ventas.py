@@ -1,6 +1,6 @@
 from odoo import api, models, fields
 from odoo.exceptions import ValidationError
-
+from ..services.request_api_mitienda import RequestApiMiTienda
 
 class WizardMiTiendaPeVentas(models.TransientModel):
     _name = "wizard.mitienda.pe.ventas"
@@ -20,3 +20,20 @@ class WizardMiTiendaPeVentas(models.TransientModel):
 
     def sincronizar(self):
         return True
+
+    @api.onchange('conexion_id')
+    def conexion_onchange(self):
+        if not self.conexion_id:
+            return {
+                'warning':{
+                    'title': 'Error',
+                    'message': 'Debe establecer una conexión activa para la compañía actual',
+                }
+            }
+
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        conexion = RequestApiMiTienda(self.env)
+        if conexion.conexion_id:
+            res['conexion_id'] = conexion.conexion_id.id
+        return res
