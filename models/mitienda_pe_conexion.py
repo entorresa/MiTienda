@@ -6,7 +6,7 @@ class MiTiendaPeConexion(models.Model):
     _name = "mitienda.pe.conexion"
 
     name = fields.Char(string='Conexión', compute='_compute_name', store=False)
-    url = fields.Char(string='API Host', required=True, default="https://api.mitienda.pe/v1")
+    url = fields.Char(string='API Host', required=True, default="https://publicapi.mitienda.pe/api/v1")
     entorno = fields.Selection(
         string='Entorno',
         selection=[
