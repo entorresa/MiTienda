@@ -59,8 +59,11 @@ class RequestApiMiTienda:
             endpoint = f'/mitienda/order/code/{code}'
         return self.request_api(endpoint)
 
-    def buscar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today(), pagina=1):
+    def buscar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today(), pagina=1, legacy=True):
         fecha_inicio = fields.Date.to_string(fecha_inicio)
         fecha_fin = fields.Date.to_string(fecha_fin)
-        endpoint = f"/mitienda/orders?from={fecha_inicio}&to={fecha_fin}&page={pagina}&status=1&order=date_created&otype=asc&"
+        if legacy:
+            endpoint = f"/mitienda/orders/codes/{fecha_inicio}/{fecha_fin}"
+        else:
+            endpoint = f"/mitienda/orders?from={fecha_inicio}&to={fecha_fin}&page={pagina}&status=1&order=date_created&otype=asc&"
         return self.request_api(endpoint)
