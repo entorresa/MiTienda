@@ -79,7 +79,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                                                         status=respuesta['data']['status'],
                                                         mitienda_partner_id=obj_bitacora_cliente.id)
                     else:
-                        obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente=obj_cliente.id, productos=productos)
+                        obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente_id=obj_cliente.id, productos=productos)
                         if obj_venta:
                             # Registrar bitacora de ventas
                             self.registrar_bitacora_venta(fecha_venta=respuesta['data']['date_created'],
@@ -127,16 +127,16 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             })
         return obj_producto
 
-    def buscar_venta(self, id, code, cliente, productos):
+    def buscar_venta(self, id, code, cliente_id, productos):
         obj_venta = self.env['sale.order'].search([('mitienda_id','=', id)])
         if not obj_venta:
             obj_venta = self.env['sale.order'].create({
-                'partner_id':cliente.id,
+                'partner_id': cliente_id,
                 'mitienda_id':id,
                 'mitienda_code': code,
-                'mitienda_sunat_pdf': False
+                'mitienda_sunat_pdf': False,
+                'order_line': [Command.create(linea) for linea in productos]
             })
-            obj_venta.order_lines= [Command.create(productos)]
         return obj_venta
 
     def registrar_bitacora_cliente(self, respuesta, obj_cliente):
