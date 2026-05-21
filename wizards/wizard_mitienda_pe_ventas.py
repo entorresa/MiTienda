@@ -57,12 +57,20 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                             'mitienda_email': respuesta['data']['billing_info']['email'],
                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                         })
-
+                    for item in respuesta['data']['items']:
+                        obj_producto = self.buscar_producto(id=item['id'], sku=item['sku'])
+                        if not obj_producto:
+                            # registrar producto
         return False
 
     def buscar_cliente(self, id, email, doc_number):
         obj_cliente = self.env['res.partner'].search(['|','|',('mitienda_id', '=', id), ('mitienda_email', '=', email), ('mitienda_doc_number','=', doc_number)])
         return obj_cliente
+
+    def buscar_producto(self, id, sku):
+        obj_producto = self.env['product.product'].search(['|', ('mitienda_id', '=', id), ('mitienda_sku', '=', sku)])
+        return obj_producto
+
     @api.onchange('conexion_id')
     def conexion_onchange(self):
         if not self.conexion_id:
