@@ -50,11 +50,11 @@ class MiTiendaPeConexion(models.Model):
             entorno = dict(self._fields['entorno'].selection).get(record.entorno)
             record.name = f'{entorno} - {record.url}'
 
-    @api.model
-    def create(self, vals):
-        if vals.get('url'):
-            vals['url'] = vals['url'].rstrip('/')
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        if vals_list.get('url'):
+            vals_list['url'] = vals_list['url'].rstrip('/')
+        return super().create(vals_list)
 
     def write(self, vals):
         if vals.get('url'):

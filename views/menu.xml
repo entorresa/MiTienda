@@ -12,6 +12,12 @@
         sequence="10"
         active="True" />
 
+    <menuitem id="menu_root_sincronizacion"
+        name="Sincronización"
+        parent="api_mitienda_peru.menu_root"
+        sequence="20"
+        active="True" />
+
     <menuitem id="menu_root_configuracion"
         name="Configuración"
         parent="api_mitienda_peru.menu_root"
@@ -37,4 +43,11 @@
         parent="api_mitienda_peru.menu_root_bitacora"
         sequence="20"
         action="api_mitienda_peru.action_mi_tienda_pe_sale_order" />
+
+    <!-- Submenus de sincronizacion -->
+    <menuitem id="sincronizacion_ventas"
+        name="Ventas"
+        parent="api_mitienda_peru.menu_root_sincronizacion"
+        sequence="10"
+        action="api_mitienda_peru.action_wizard_sincronizacion_ventas" />
 </odoo>

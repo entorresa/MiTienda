@@ -1,6 +1,8 @@
 from odoo import fields
 import requests
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class RequestApiMiTienda:
 
@@ -30,11 +32,11 @@ class RequestApiMiTienda:
                 respuesta = requests.get(self.conexion_id.url + endpoint, headers=self.cabecera, timeout=self.conexion_id.timeout_api)
                 respuesta.raise_for_status()
                 data = respuesta.json()
-                data['success'] = True
         except Exception as e:
             data['error']['message'] = str(e)
-
         finally:
+            if self.conexion_id.entorno == 'pruebas':
+                _logger.info(data)
             if notificacion:
                 return {
                     'type': 'ir.actions.client',
@@ -60,8 +62,8 @@ class RequestApiMiTienda:
             endpoint = f'/mitienda/order/code/{code}'
         return self.request_api(endpoint)
 
-    def buscar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today(), pagina=1):
+    def buscar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today()):
         fecha_inicio = fields.Date.to_string(fecha_inicio)
         fecha_fin = fields.Date.to_string(fecha_fin)
-        endpoint = f"/mitienda/orders?from={fecha_inicio}&to={fecha_fin}&page={pagina}&status=1&order=date_created&otype=asc&"
+        endpoint = f"/mitienda/orders/codes/{fecha_inicio}/{fecha_fin}"
         return self.request_api(endpoint)

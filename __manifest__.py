@@ -19,6 +19,7 @@
         'views/product_product.xml',
         'views/res_partner.xml',
         'views/product_template.xml',
+        'wizards/wizard_mitienda_pe_ventas.xml',
         'views/menu.xml',
         ],
     'demo': [],
