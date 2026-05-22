@@ -4,15 +4,26 @@
         <record id="dte_view_form_product_product_inherit" model="ir.ui.view">
             <field name="name">dte_view_form_product_product_inherit</field>
             <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_normal_form_view"></field>
+            <field name="inherit_id" ref="product.product_normal_form_view" />
             <field name="arch" type="xml">
-                <xpath expr="//notebook//page[@name='inventory']" position="after">
-                    <page name="mitienda_pe" string="MiTienda.pe">
-                        <group name="datos_tienda_pe">
+                <xpath expr="//notebook" position="inside">
+                    <page name="mitienda_pe_product" string="MiTienda.pe"
+                        invisible="product_variant_count &lt;= 1">
+                        <group name="datos_tienda_pe_product">
                             <field name="mitienda_id" readonly="1" />
-                            <field name="mitienda_sku"/>
+                            <field name="mitienda_sku" />
                         </group>
                     </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="dte_product_product_tree_view_inherit" model="ir.ui.view">
+            <field name="name">dte_product_product_tree_view_inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_code']" position="after">
+                    <field name="mitienda_sku" optional="show" />
                 </xpath>
             </field>
         </record>

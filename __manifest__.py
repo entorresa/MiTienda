@@ -18,6 +18,7 @@
         'views/sale_order.xml',
         'views/product_product.xml',
         'views/res_partner.xml',
+        'views/product_template.xml',
         'views/menu.xml',
         ],
     'demo': [],
