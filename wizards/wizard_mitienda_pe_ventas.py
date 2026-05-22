@@ -42,6 +42,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 50:
                 for venta_code in ventas_api_codes:
                     respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
+                    pp(respuesta)
                     if respuesta['success'] is True:
                         # Solo ventas con estado Aprobado (1)
                         if respuesta['data']['status'] == 1:
@@ -175,6 +176,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
         domain = operador+domain
         obj_venta = self.env['sale.order'].search(domain, limit=1, order='id asc')
         if not obj_venta:
+            # cotizacion
             obj_venta = self.env['sale.order'].create({
                 'partner_id': cliente_id,
                 'mitienda_id':id,
@@ -182,6 +184,18 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                 'mitienda_sunat_pdf': False,
                 'order_line': [Command.create(linea) for linea in productos]
             })
+            if self.conexion_id.sync_venta_logica == 'venta':
+                # venta confirmado
+                obj_venta.action_confirm()
+            elif self.conexion_id.sync_venta_logica == 'factura_borrador':
+                # venta confirmado y crea la factura en borrador
+                obj_venta.action_confirm()
+                obj_venta._create_invoices()
+            elif self.conexion_id.sync_venta_logica == 'factura_publicada':
+                obj_venta.action_confirm()
+                factura = obj_venta._create_invoices()
+                factura.action_post()
+            # por else no hace nada, la venta se queda como cotizacion
         return obj_venta
 
     def registrar_bitacora_cliente(self, respuesta, obj_cliente):
@@ -208,7 +222,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             'error': error,
             'company_id': self.env.company.id,
             'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
-            'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
+            'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido.id if self.conexion_id.sync_cliente_logica == 'cliente_predefinido' else None,
             'sync_venta_logica': self.conexion_id.sync_venta_logica,
             'mitienda_order_code': mitienda_order_code,
             'mitienda_order_id': mitienda_order_id,
