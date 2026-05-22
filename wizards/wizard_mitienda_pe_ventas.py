@@ -127,20 +127,23 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             }
 
     def buscar_cliente(self, id, email, doc_number):
-        domain=[]
-        operador=[]
-        if id:
-            domain.append(('mitienda_id', '=', id))
-        if email:
-            domain.append(('mitienda_email', '=', email))
-        if doc_number:
-            domain.append(('mitienda_doc_number', '=', doc_number))
-        if len(domain) == 3:
-            operador.extend(['|', '|'])
-        elif len(domain) == 2:
-            operador.append('|')
-        domain= operador+domain
-        obj_cliente = self.env['res.partner'].search(domain, limit=1, order='id asc')
+        if self.conexion_id.sync_cliente_logica == 'cliente_predefinido':
+            obj_cliente = self.conexion_id.sync_cliente_predefinido
+        else:
+            domain=[]
+            operador=[]
+            if id:
+                domain.append(('mitienda_id', '=', id))
+            if email:
+                domain.append(('mitienda_email', '=', email))
+            if doc_number:
+                domain.append(('mitienda_doc_number', '=', doc_number))
+            if len(domain) == 3:
+                operador.extend(['|', '|'])
+            elif len(domain) == 2:
+                operador.append('|')
+            domain= operador+domain
+            obj_cliente = self.env['res.partner'].search(domain, limit=1, order='id asc')
         return obj_cliente
 
     def buscar_producto(self, id, sku):
