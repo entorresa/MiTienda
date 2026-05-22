@@ -20,7 +20,6 @@
                                 <field name="token" />
                                 <field name="token_expiracion" />
                                 <field name="timeout_api" />
-                                <field name="token_header" />
                                 <field name="activo" widget="boolean_toggle" />
                                 <button name="probar_conexion" string="Probar conexión" type="object"
                                     invisible="id == False" class="btn btn-primary">
@@ -53,7 +52,6 @@
                 <list string="conexion api" edit="False">
                     <field name="name" />
                     <field name="token_expiracion" />
-                    <field name="token_header" />
                     <field name="timeout_api" />
                     <field name="activo" widget="boolean_toggle" />
                 </list>

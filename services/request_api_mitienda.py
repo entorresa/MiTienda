@@ -1,7 +1,6 @@
 from odoo import fields
 import requests
-import logging
-_logger = logging.getLogger(__name__)
+
 
 class RequestApiMiTienda:
 
@@ -9,8 +8,10 @@ class RequestApiMiTienda:
         self.env = env
         self.company_id = company_id or env.company
         self.conexion_id = self.env['mitienda.pe.conexion'].search([('company_id', '=', self.company_id.id), ('activo', '=', True)], limit=1)
-        self.cabecera = {'Content-Type': 'application/json'}
-        self.cabecera.update({'Authorization': f"Bearer {self.conexion_id.token}"} if self.conexion_id.token_header == 'bearer' else {'token': self.conexion_id.token})
+        self.cabecera = {
+            'Content-Type': 'application/json',
+            'Authorization': f"Bearer {self.conexion_id.token}",
+        }
 
     def request_api(self, endpoint, notificacion=False, mensaje='Éxito'):
         data = {
