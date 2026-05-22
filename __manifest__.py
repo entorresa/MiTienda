@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     'name': "API mitienda.pe",
-    'summary': "Módulo para sincronizar datos entre Odoo y la API mitienda.pe",
+    'summary': "Módulo de sincronización de datos de MiTienda.pe para Odoo",
     'description': """
-        Módulo para sincronizar datos entre Odoo y la API mitienda.pe
+        Módulo de sincronización de datos de MiTienda.pe para Odoo
     """,
     'author': "DTE S.R.L.",
     'website': "https://www.dte.com.bo",
