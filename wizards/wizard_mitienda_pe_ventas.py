@@ -42,7 +42,6 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 50:
                 for venta_code in ventas_api_codes:
                     respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
-                    pp(respuesta)
                     if respuesta['success'] is True:
                         # Solo ventas con estado Aprobado (1)
                         if respuesta['data']['status'] == 1:
