@@ -1,6 +1,6 @@
 ### Configuración de conexión
 ---
-## Indice
+## Índice
 -   [Paso #1: Solicitar token de acceso al proveedor de api](#paso-1-solicitar-token-de-acceso-al-proveedor-de-api)
 -   [Paso #2: Configurar parámetros de conexión](#paso-2-configurar-parametros-de-conexion)
 -   [Paso #3: Probar conexión](#paso-3-probar-conexion)
