@@ -1,6 +1,7 @@
-## 3. Sincronización manual de ventas
 ---
-## Índice
+### 3. Sincronización manual de ventas
+---
+
+### Procedimiento
 -   [](#)
 -   [](#)
----

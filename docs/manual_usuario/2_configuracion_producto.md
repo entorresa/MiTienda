@@ -1,11 +1,12 @@
-## 2. Configuración de productos
 ---
-## Índice
--   [Registrar producto y establecer un SKU ](#registrar-producto-y-establecer-un-sku)
--   [Registrar variante de producto y establecer un SKU](#registrar-variante-de-producto-y-establecer-un-sku)
+### 2. Configuración de productos
 ---
 
-## Registrar producto y establecer un SKU
+### Procedimiento
+-   [Registrar producto y establecer un SKU ](#registrar-producto-y-establecer-un-sku)
+-   [Registrar variante de producto y establecer un SKU](#registrar-variante-de-producto-y-establecer-un-sku)
+
+### Registrar producto y establecer un SKU
 Antes de realizar la sincronización de ventas, debe registrar todos los productos de ventas que existen en el sistema externo.
 
 La sincronización de ventas del modulo MiTienda.pe __NO CREA PRODUCTOS__.
@@ -20,7 +21,7 @@ Para registrar un producto que no tiene variantes, debe registrar desde menu `ve
 
 ---
 
-## Registrar variante de producto y establecer un SKU
+### Registrar variante de producto y establecer un SKU
 Si el producto tiene variantes debe registrar el **SKU** en cada variante de producto.
 
 ![variantes de productos](/docs/assets/productos/1_variantes.png)
