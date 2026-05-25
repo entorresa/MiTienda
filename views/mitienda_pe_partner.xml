@@ -58,7 +58,7 @@
         </record>
 
         <record id='action_mi_tienda_pe_partner' model='ir.actions.act_window'>
-            <field name="name">Conexion API</field>
+            <field name="name">Bitácora de sincronización de clientes</field>
             <field name="res_model">mitienda.pe.partner</field>
             <field name="view_mode">list,form</field>
         </record>

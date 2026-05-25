@@ -127,20 +127,23 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             }
 
     def buscar_cliente(self, id, email, doc_number):
-        domain=[]
-        operador=[]
-        if id:
-            domain.append(('mitienda_id', '=', id))
-        if email:
-            domain.append(('mitienda_email', '=', email))
-        if doc_number:
-            domain.append(('mitienda_doc_number', '=', doc_number))
-        if len(domain) == 3:
-            operador.extend(['|', '|'])
-        elif len(domain) == 2:
-            operador.append('|')
-        domain= operador+domain
-        obj_cliente = self.env['res.partner'].search(domain, limit=1, order='id asc')
+        if self.conexion_id.sync_cliente_logica == 'cliente_predefinido':
+            obj_cliente = self.conexion_id.sync_cliente_predefinido
+        else:
+            domain=[]
+            operador=[]
+            if id:
+                domain.append(('mitienda_id', '=', id))
+            if email:
+                domain.append(('mitienda_email', '=', email))
+            if doc_number:
+                domain.append(('mitienda_doc_number', '=', doc_number))
+            if len(domain) == 3:
+                operador.extend(['|', '|'])
+            elif len(domain) == 2:
+                operador.append('|')
+            domain= operador+domain
+            obj_cliente = self.env['res.partner'].search(domain, limit=1, order='id asc')
         return obj_cliente
 
     def buscar_producto(self, id, sku):
@@ -172,6 +175,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
         domain = operador+domain
         obj_venta = self.env['sale.order'].search(domain, limit=1, order='id asc')
         if not obj_venta:
+            # cotizacion
             obj_venta = self.env['sale.order'].create({
                 'partner_id': cliente_id,
                 'mitienda_id':id,
@@ -179,6 +183,18 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                 'mitienda_sunat_pdf': False,
                 'order_line': [Command.create(linea) for linea in productos]
             })
+            if self.conexion_id.sync_venta_logica == 'venta':
+                # venta confirmado
+                obj_venta.action_confirm()
+            elif self.conexion_id.sync_venta_logica == 'factura_borrador':
+                # venta confirmado y crea la factura en borrador
+                obj_venta.action_confirm()
+                obj_venta._create_invoices()
+            elif self.conexion_id.sync_venta_logica == 'factura_publicada':
+                obj_venta.action_confirm()
+                factura = obj_venta._create_invoices()
+                factura.action_post()
+            # por else no hace nada, la venta se queda como cotizacion
         return obj_venta
 
     def registrar_bitacora_cliente(self, respuesta, obj_cliente):
@@ -205,7 +221,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             'error': error,
             'company_id': self.env.company.id,
             'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
-            'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido,
+            'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido.id if self.conexion_id.sync_cliente_logica == 'cliente_predefinido' else None,
             'sync_venta_logica': self.conexion_id.sync_venta_logica,
             'mitienda_order_code': mitienda_order_code,
             'mitienda_order_id': mitienda_order_id,
