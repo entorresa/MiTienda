@@ -47,20 +47,32 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                         if respuesta['data']['status'] == 1:
                             contador_total += 1
                             # verificar si existe cliente
-                            obj_cliente = self.buscar_cliente(id=respuesta['data']['customer'].get('id'), email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
-                            obj_bitacora_cliente = self.env['mitienda.pe.partner']
-                            if not obj_cliente:
-                                # registra nuevo cliente
-                                obj_cliente = self.env['res.partner'].create({
-                                    'name': f"{respuesta['data']['billing_info']['name']} {respuesta['data']['billing_info']['last_name']}",
-                                    'email': respuesta['data']['billing_info']['email'],
-                                    'vat': respuesta['data']['billing_info']['doc_number'],
-                                    'mitienda_id': respuesta['data']['customer'].get('id'),
-                                    'mitienda_email': respuesta['data']['billing_info']['email'],
-                                    'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
-                                })
-                                # registra en bitacora de clientes
-                                obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
+                            obj_bitacora_cliente = self.env['mitienda.pe.partner'].search([
+                                '|',
+                                ('mitienda_doc_number', '=', respuesta['data']['billing_info']['doc_number']),
+                                ('mitienda_email', '=', respuesta['data']['billing_info']['email']),
+                            ], limit=1, order="id desc")
+                            if self.conexion_id.sync_cliente_logica == 'cliente_predefinido':
+                                obj_cliente = self.conexion_id.sync_cliente_predefinido
+                            else:
+                                if obj_bitacora_cliente:
+                                    obj_cliente = obj_bitacora_cliente.partner_id
+                                else:
+                                    obj_cliente = self.buscar_cliente(id=respuesta['data']['customer'].get('id'), email=respuesta['data']['billing_info']['email'], doc_number=respuesta['data']['billing_info']['doc_number'])
+                                    if not obj_cliente:
+                                        # registra nuevo cliente
+                                        obj_cliente = self.env['res.partner'].create({
+                                            'name': f"{respuesta['data']['billing_info']['name']} {respuesta['data']['billing_info']['last_name']}",
+                                            'email': respuesta['data']['billing_info']['email'],
+                                            'vat': respuesta['data']['billing_info']['doc_number'],
+                                            'mitienda_id': respuesta['data']['customer'].get('id'),
+                                            'mitienda_email': respuesta['data']['billing_info']['email'],
+                                            'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
+                                        })
+                                        # registra en bitacora de clientes
+                                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
+
+                            # Buscar productos de Odoo por SKU
                             skus_inexistentes = []
                             productos = []
                             for item in respuesta['data']['items']:
@@ -127,23 +139,20 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             }
 
     def buscar_cliente(self, id, email, doc_number):
-        if self.conexion_id.sync_cliente_logica == 'cliente_predefinido':
-            obj_cliente = self.conexion_id.sync_cliente_predefinido
-        else:
-            domain=[]
-            operador=[]
-            if id:
-                domain.append(('mitienda_id', '=', id))
-            if email:
-                domain.append(('mitienda_email', '=', email))
-            if doc_number:
-                domain.append(('mitienda_doc_number', '=', doc_number))
-            if len(domain) == 3:
-                operador.extend(['|', '|'])
-            elif len(domain) == 2:
-                operador.append('|')
-            domain= operador+domain
-            obj_cliente = self.env['res.partner'].search(domain, limit=1, order='id asc')
+        domain=[]
+        operador=[]
+        if id:
+            domain.append(('mitienda_id', '=', id))
+        if email:
+            domain.append(('mitienda_email', '=', email))
+        if doc_number:
+            domain.append(('mitienda_doc_number', '=', doc_number))
+        if len(domain) == 3:
+            operador.extend(['|', '|'])
+        elif len(domain) == 2:
+            operador.append('|')
+        domain= operador+domain
+        obj_cliente = self.env['res.partner'].search(domain, limit=1, order='id asc')
         return obj_cliente
 
     def buscar_producto(self, id, sku):

@@ -46,10 +46,10 @@
             <field name="arch" type="xml">
                 <list string="clientes sincronizados" create="0" edit="0" delete="0">
                     <field name="fecha_sincronizacion" />
-                    <field name="conexion_id" />
-                    <field name="partner_id" />
-                    <field name="mitienda_name" />
-                    <field name="mitienda_last_name" />
+                    <field name="conexion_id" widget="many2one_link" />
+                    <field name="partner_id" widget="many2one_link" />
+                    <!-- <field name="mitienda_name" />
+                    <field name="mitienda_last_name" /> -->
                     <field name="mitienda_email" />
                     <field name="mitienda_doc_number" />
                     <field name="company_id" optional="hide"/>
