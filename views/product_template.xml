@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="dte_view_form_product_template_inherit" model="ir.ui.view">
+            <field name="name">dte_view_form_product_template_inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook//page[@name='inventory']" position="after">
+                    <page name="mitienda_pe" string="MiTienda.pe" invisible="product_variant_count &gt; 1">
+                        <group name="datos_tienda_pe">
+                            <field name="mitienda_id" readonly="1" />
+                            <field name="mitienda_sku" />
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="dte_view_list_product_template_inherit" model="ir.ui.view">
+            <field name="name">dte_view_list_product_template_inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_code']" position="after">
+                    <field name="mitienda_sku" optional="show" />
+                </xpath>
+            </field>
+        </record>
+        <record id="product_variant_easy_edit_view_inherit" model="ir.ui.view">
+            <field name="name">product_variant_easy_edit_view_inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_variant_easy_edit_view"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <group name="datos_tienda_pe" string="MiTienda.pe">
+                            <field name="mitienda_id" readonly="1" />
+                            <field name="mitienda_sku" />
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
