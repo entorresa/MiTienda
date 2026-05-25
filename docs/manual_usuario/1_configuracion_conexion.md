@@ -56,3 +56,5 @@ Luego de concluir el registro debe _**Probar Conexión**_
 Si la conexión se establece con éxito, se mostrará de manerá automática la notificación de _**Exito**_ como se ve en la imagén, caso contrario se visualizará una notificación de _**Error**_.
 
 ![probar conexion](/docs/assets/configuracion/4_probar_conexion.png)
+
+---
