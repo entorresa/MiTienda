@@ -4,9 +4,9 @@ from odoo.exceptions import ValidationError
 
 class MiTiendaPePartner(models.Model):
     _name = "mitienda.pe.partner"
-    _rec_name = 'fecha_sincronizacion'
     _order = 'fecha_sincronizacion desc'
 
+    name = fields.Char(string='Conexión', compute='_compute_name', store=False)
     conexion_id = fields.Many2one(string="Conexión", comodel_name="mitienda.pe.conexion", required=True)
     mitienda_sale_order_ids = fields.One2many(string="Ventas", comodel_name="mitienda.pe.sale.order", inverse_name="mitienda_partner_id")
     fecha_sincronizacion = fields.Datetime(string="Fecha de sincronización", required=True, default=fields.Datetime.now)
@@ -17,6 +17,11 @@ class MiTiendaPePartner(models.Model):
     mitienda_email = fields.Char(string="Correo electrónico")
     mitienda_doc_number = fields.Char(string="Documento")
     cant_mitienda_sale_order = fields.Integer(string="Cantidad de ventas", default=0, compute="_cantidad_ventas_sincronizados")
+
+    @api.depends('mitienda_doc_number', 'mitienda_name', 'mitienda_last_name')
+    def _compute_name(self):
+        for record in self:
+            record.name = f'{record.mitienda_doc_number} - {record.mitienda_name} {record.mitienda_last_name}'
 
     @api.depends('mitienda_sale_order_ids')
     def _cantidad_ventas_sincronizados(self):

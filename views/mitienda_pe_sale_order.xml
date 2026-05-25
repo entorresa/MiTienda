@@ -42,11 +42,11 @@
                     <field name="fecha_sincronizacion" />
                     <field name="fecha_venta" />
                     <field name="mensaje" />
-                    <field name="sale_order_id" />
+                    <field name="sale_order_id" widget="many2one_link" />
                     <field name="sync_venta_logica" />
                     <field name="mitienda_order_code" />
                     <field name="mitienda_order_id" />
-                    <field name="mitienda_order_status" />
+                    <field name="mitienda_order_status" optional="hide" />
                     <field name="company_id" optional="hide"/>
                 </list>
             </field>
