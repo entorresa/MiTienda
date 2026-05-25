@@ -52,8 +52,9 @@ class MiTiendaPeConexion(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        if vals_list.get('url'):
-            vals_list['url'] = vals_list['url'].rstrip('/')
+        for vals in vals_list:
+            if vals.get('url'):
+                vals['url'] = vals['url'].rstrip('/')
         return super().create(vals_list)
 
     def write(self, vals):
