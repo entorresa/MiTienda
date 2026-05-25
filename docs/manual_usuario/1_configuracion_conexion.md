@@ -1,4 +1,4 @@
-### Configuración de conexión
+## 1. Configuración de conexión
 ---
 ## Índice
 -   [Paso #1: Solicitar token de acceso al proveedor de api](#paso-1-solicitar-token-de-acceso-al-proveedor-de-api)

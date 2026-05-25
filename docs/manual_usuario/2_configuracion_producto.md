@@ -1,4 +1,4 @@
-## Configuración de productos
+## 2. Configuración de productos
 ---
 ## Índice
 -   [Registrar producto y establecer un SKU ](#registrar-producto-y-establecer-un-sku)
