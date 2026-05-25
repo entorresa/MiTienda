@@ -29,6 +29,8 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             raise ValidationError('Debe establecer una conexión activa para la compañía actual')
         try:
             respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
+            if not respuesta.get('success', False):
+                raise Exception(respuesta.get('error', {}).get('message', 'Error'))
             ventas_api_codes = []
             if len(respuesta['data']) > 0:
                 for data in respuesta['data']:
@@ -122,6 +124,10 @@ class WizardMiTiendaPeVentas(models.TransientModel):
         except Exception as e:
             error = True
             mensaje = str(e)
+            self.registrar_bitacora_venta(
+                mensaje=mensaje,
+                error=True,
+            )
         finally:
             return {
                 'type': 'ir.actions.client',

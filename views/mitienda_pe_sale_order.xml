@@ -38,15 +38,14 @@
             <field name="name">dte_view_list_mitienda_pe_sale_order</field>
             <field name="model">mitienda.pe.sale.order</field>
             <field name="arch" type="xml">
-                <list string="Bitácora" create="0" edit="0" delete="0">
+                <list string="Bitácora" create="0" edit="0" delete="0" decoration-danger="error and not mitienda_order_id" decoration-warning="error and mitienda_order_id > 0">
                     <field name="fecha_sincronizacion" />
                     <field name="fecha_venta" />
                     <field name="mensaje" />
                     <field name="sale_order_id" widget="many2one_link" />
                     <field name="sync_venta_logica" />
                     <field name="mitienda_order_code" />
-                    <field name="mitienda_order_id" />
-                    <field name="mitienda_order_status" optional="hide" />
+                    <field name="error" optional="hide"/>
                     <field name="company_id" optional="hide"/>
                 </list>
             </field>
