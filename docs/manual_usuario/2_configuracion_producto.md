@@ -19,13 +19,9 @@ Para registrar un producto que no tiene variantes, debe registrar desde menu `ve
 
 ![registro de sku](/docs/assets/productos/2_registrar_producto.png)
 
----
-
 ### Registrar variante de producto y establecer un SKU
 Si el producto tiene variantes debe registrar el **SKU** en cada variante de producto.
 
 ![variantes de productos](/docs/assets/productos/1_variantes.png)
 
 ![registro de sku](/docs/assets/productos/2_variantes.png)
-
----
