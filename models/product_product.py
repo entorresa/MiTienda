@@ -1,5 +1,5 @@
 from odoo import api, models, fields
-
+from ..services.request_api_mitienda import RequestApiMiTienda
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -28,7 +28,8 @@ class ProductTemplate(models.Model):
         return res
 
     def verificar_sku(self):
-        return True
+        if self.mitienda_sku and self.product_variant_count == 1:
+            return self.product_variant_ids[0].verificar_sku()
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
@@ -37,4 +38,21 @@ class ProductProduct(models.Model):
     mitienda_sku = fields.Char(string='SKU', tracking=True, copy=False)
 
     def verificar_sku(self):
-        return True
+        if self.mitienda_sku:
+            respuesta = RequestApiMiTienda(self.env).buscar_producto(sku=self.mitienda_sku)
+            if respuesta['success'] is True and self.mitienda_id != respuesta['data']['id']:
+                self.write({'mitienda_id': respuesta['data']['id']})
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error' if respuesta['success'] is False else 'Éxito',
+                    'message': respuesta['error']['message'] if respuesta['success'] is False else 'Verificación completado',
+                    'type': 'danger' if respuesta['success'] is False else 'success',
+                    'sticky': False,
+                    'next': {
+                        'type': 'ir.actions.client',
+                        'tag': 'soft_reload',
+                    },
+                },
+            }
