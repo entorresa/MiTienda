@@ -22,7 +22,7 @@ class SyncAPIMiTienda:
             raise Exception('Debe establecer una conexión activa para la compañía actual')
         try:
             mensaje = "Sincronización automática de ventas iniciada" if headless else "Sincronización de ventas iniciada"
-            self.registrar_bitacora_venta(mensaje=mensaje)
+            self.registrar_bitacora_venta(mensaje=mensaje, sync_venta_logica=False)
             estado = True
             pagina = 1
             ventas_api_codes = []
@@ -133,7 +133,7 @@ class SyncAPIMiTienda:
             )
         finally:
             mensaje = "Sincronización automática de ventas finalizada" if headless else "Sincronización de ventas finalizada"
-            self.registrar_bitacora_venta(mensaje=mensaje)
+            self.registrar_bitacora_venta(mensaje=mensaje, sync_venta_logica=False)
             if not headless:
                 return {
                     'type': 'ir.actions.client',
@@ -231,7 +231,7 @@ class SyncAPIMiTienda:
         })
         return obj_bitacora_cliente
 
-    def registrar_bitacora_venta(self, fecha_venta=None, mensaje=None, sale_order_id=None, partner_id=None, error=False, mitienda_order_code=None, mitienda_order_id=None, status=None, pdf=None, mitienda_partner_id=None):
+    def registrar_bitacora_venta(self, fecha_venta=None, mensaje=None, sale_order_id=None, partner_id=None, error=False, mitienda_order_code=None, mitienda_order_id=None, status=None, pdf=None, mitienda_partner_id=None, sync_venta_logica=True):
         self.env['mitienda.pe.sale.order'].create({
             'conexion_id': self.conexion_id.id,
             'fecha_sincronizacion': fields.Datetime.now(),
@@ -243,7 +243,7 @@ class SyncAPIMiTienda:
             'company_id': self.env.company.id,
             'sync_cliente_logica': self.conexion_id.sync_cliente_logica,
             'sync_cliente_predefinido': self.conexion_id.sync_cliente_predefinido.id if self.conexion_id.sync_cliente_logica == 'cliente_predefinido' else None,
-            'sync_venta_logica': self.conexion_id.sync_venta_logica,
+            'sync_venta_logica': self.conexion_id.sync_venta_logica if sync_venta_logica else None,
             'mitienda_order_code': mitienda_order_code,
             'mitienda_order_id': mitienda_order_id,
             'mitienda_order_status': str(status) if status else status,
