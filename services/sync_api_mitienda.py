@@ -1,13 +1,17 @@
 from odoo import fields, Command
-import requests
 import logging
-from services.request_api_mitienda import RequestApiMiTienda
+from .request_api_mitienda import RequestApiMiTienda
 from odoo.exceptions import ValidationError
 _logger = logging.getLogger(__name__)
 
 
 class SyncAPIMiTienda:
-    def sincronizar_ventas(self):
+    def __init__(self, env):
+        self.env = env
+        conexion = RequestApiMiTienda(self.env)
+        self.conexion_id = conexion.conexion_id
+
+    def sincronizar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today()):
         # Llamar a buscar_ventas con los parámetros fecha_inicio y fecha_fin
         error = False
         mensaje = 'Sincronización finalizada con éxito'
@@ -21,7 +25,7 @@ class SyncAPIMiTienda:
             pagina = 1
             ventas_api_codes = []
             while bandera:
-                respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin, pagina=pagina)
+                respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, pagina=pagina)
 
                 if not respuesta.get('success', False):
                     bandera = False

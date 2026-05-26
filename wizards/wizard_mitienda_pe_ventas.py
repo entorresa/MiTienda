@@ -1,6 +1,7 @@
-from odoo import api, models, fields, Command
+from odoo import api, models, fields
 from odoo.exceptions import ValidationError
 from ..services.request_api_mitienda import RequestApiMiTienda
+from ..services.sync_api_mitienda import SyncAPIMiTienda
 
 class WizardMiTiendaPeVentas(models.TransientModel):
     _name = "wizard.mitienda.pe.ventas"
@@ -19,7 +20,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                 raise ValidationError("Fecha inicio debe ser igual o anterior a fecha fin")
 
     def sincronizar(self):
-        return False
+        return SyncAPIMiTienda(self.env).sincronizar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
 
     def default_get(self, fields_list):
         conexion = RequestApiMiTienda(self.env)
