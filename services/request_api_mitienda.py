@@ -67,3 +67,10 @@ class RequestApiMiTienda:
         fecha_fin = fields.Date.to_string(fecha_fin)
         endpoint = f"/mitienda/orders/codes/{fecha_inicio}/{fecha_fin}"
         return self.request_api(endpoint)
+
+    def buscar_producto(self, id=0, sku=None):
+        if id > 0:
+            endpoint = f'/product/{id}'
+        else:
+            endpoint = f'/product/sku/{sku}'
+        return self.request_api(endpoint)
