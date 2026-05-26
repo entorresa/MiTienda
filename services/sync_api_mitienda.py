@@ -22,14 +22,13 @@ class SyncAPIMiTienda:
             raise ValidationError('Debe establecer una conexión activa para la compañía actual')
         try:
             self.registrar_bitacora_venta(mensaje="Sincronización de ventas iniciada")
-            bandera = True
+            estado = True
             pagina = 1
             ventas_api_codes = []
-            while bandera:
+            while estado:
                 respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, pagina=pagina)
-
-                if not respuesta.get('success', False):
-                    bandera = False
+                estado = respuesta.get('success', False)
+                if not estado:
                     raise Exception(respuesta.get('error', {}).get('message', 'Error'))
                 if len(respuesta['data']) > 0:
                     for data in respuesta['data']:
@@ -37,10 +36,8 @@ class SyncAPIMiTienda:
                         obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
                         if not obj_venta:
                             ventas_api_codes.append(data['code'])
-                if not respuesta['pagination']['next']:
-                    bandera = False
-                if len(respuesta['data']) == 0 and respuesta['pagination']['total'] == 0:
-                    bandera = False
+                if not respuesta['pagination']['next'] or len(respuesta['data']) == 0 or respuesta['pagination']['total'] == 0:
+                    estado = False
                 pagina += 1
             # -------------------------------
             if len(ventas_api_codes) > 50:
