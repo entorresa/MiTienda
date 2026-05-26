@@ -47,7 +47,7 @@ class ProductProduct(models.Model):
                 'tag': 'display_notification',
                 'params': {
                     'title': 'Error' if respuesta['success'] is False else 'Éxito',
-                    'message': respuesta['error']['message'] if respuesta['success'] is False else 'Verificación completado',
+                    'message': 'SKU verificado' if respuesta['success'] else respuesta['error']['message'],
                     'type': 'danger' if respuesta['success'] is False else 'success',
                     'sticky': False,
                     'next': {
