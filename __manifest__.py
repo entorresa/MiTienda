@@ -17,7 +17,7 @@
         'views/mitienda_pe_sale_order.xml',
         'views/sale_order.xml',
         'views/product_product.xml',
-        'views/res_partner.xml',
+        # 'views/res_partner.xml',
         'views/product_template.xml',
         'wizards/wizard_mitienda_pe_ventas.xml',
         'views/menu.xml',

@@ -49,7 +49,7 @@
             <field name="name">mitienda.pe.conexion.list</field>
             <field name="model">mitienda.pe.conexion</field>
             <field name="arch" type="xml">
-                <list string="conexion api" edit="False">
+                <list string="Conexión API" edit="False">
                     <field name="name" />
                     <field name="token_expiracion" />
                     <field name="timeout_api" />

@@ -89,13 +89,9 @@ class DocsController(http.Controller):
                     h1, h2, h3 {{
                         color: #2c3e50;
                     }}
-                    code {{
+                    code, pre {{
                         background: #f4f4f4;
                         padding: 2px 4px;
-                    }}
-                    pre {{
-                        background: #f4f4f4;
-                        padding: 8px;
                         font-size: 10px;
                         font-family: Consolas, "Courier New", monospace;
                         overflow-x: break-word;

@@ -146,7 +146,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
                 'params': {
                     'title': 'Error' if error else 'Éxito',
                     'message': mensaje,
-                    'type': 'danger' if error else 'success',
+                    'type': 'danger' if (error and contador_error == 0) else ('warning' if contador_error > 0 else 'success'),
                     'sticky': False,
                     'next': {
                         'type': 'ir.actions.client',
