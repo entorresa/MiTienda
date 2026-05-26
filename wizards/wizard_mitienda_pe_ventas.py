@@ -29,3 +29,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             res['conexion_id'] = conexion.conexion_id.id
             return res
         raise ValidationError('Debe establecer una conexión activa para la compañía actual')
+
+    @api.model
+    def cron_sincronizar_venta(self):
+        return SyncAPIMiTienda(self.env).sincronizar_ventas()
