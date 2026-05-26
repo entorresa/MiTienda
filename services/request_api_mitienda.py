@@ -32,6 +32,11 @@ class RequestApiMiTienda:
                 respuesta = requests.get(self.conexion_id.url + endpoint, headers=self.cabecera, timeout=self.conexion_id.timeout_api)
                 respuesta.raise_for_status()
                 data = respuesta.json()
+        except requests.exceptions.HTTPError as e:
+            if respuesta.status_code == 404:
+                data['error']['message'] = 'Registro inexistente'
+            else:
+                data['error']['message'] = str(e)
         except Exception as e:
             data['error']['message'] = str(e)
         finally:

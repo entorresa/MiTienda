@@ -42,6 +42,8 @@ class ProductProduct(models.Model):
             respuesta = RequestApiMiTienda(self.env).buscar_producto(sku=self.mitienda_sku)
             if respuesta['success'] is True and self.mitienda_id != respuesta['data']['id']:
                 self.write({'mitienda_id': respuesta['data']['id']})
+            else:
+                self.write({'mitienda_id': False})
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
