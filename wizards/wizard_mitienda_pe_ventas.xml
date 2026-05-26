@@ -6,6 +6,11 @@
             <field name="model">wizard.mitienda.pe.ventas</field>
             <field name="arch" type="xml">
                 <form>
+                    <div>
+                        <div class="alert alert-info" role="alert">
+                            El número de ventas para sincronizar debe ser menor o igual a 90
+                        </div>
+                    </div>
                     <sheet>
                         <group>
                             <field name="conexion_id" options="{'no_create':True, 'no_edit': True}" invisible="1" />
@@ -13,6 +18,7 @@
                             <field name="fecha_fin" />
                             <field name="url" />
                             <field name="entorno" />
+                            <field name="total_por_sincronizar" readonly="1"/>
                         </group>
                         <footer>
                             <button name="sincronizar" string="Sincronizar"

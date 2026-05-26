@@ -12,6 +12,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
     fecha_fin = fields.Date(string="Fecha fin", required=True, default=fields.Date.today())
     url = fields.Char(string='API Host', related='conexion_id.url', readonly=True)
     entorno = fields.Selection(string='Entorno', related='conexion_id.entorno', readonly=True)
+    total_por_sincronizar = fields.Integer(string="Total ventas para sincronizar", default=0)
 
     @api.constrains('fecha_inicio', 'fecha_fin')
     def validar(self):
