@@ -1,7 +1,7 @@
 from odoo import fields
 import requests
 import logging
-from pprint import pp
+
 _logger = logging.getLogger(__name__)
 
 class RequestApiMiTienda:
@@ -62,16 +62,15 @@ class RequestApiMiTienda:
             endpoint = f'/mitienda/order/code/{code}'
         return self.request_api(endpoint)
 
-    def buscar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today()):
+    def buscar_ventas_v1(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today()):
         fecha_inicio = fields.Date.to_string(fecha_inicio)
         fecha_fin = fields.Date.to_string(fecha_fin)
         endpoint = f"/mitienda/orders/codes/{fecha_inicio}/{fecha_fin}"
         return self.request_api(endpoint)
 
-    def buscar_ventas_v2(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today(),  pagina=1):
+    def buscar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today(),  pagina=1):
         fecha_inicio = fields.Date.to_string(fecha_inicio)
         fecha_fin = fields.Date.to_string(fecha_fin)
         endpoint = f'/mitienda/orders?status=1&order=date_created&otype=asc&from={fecha_inicio}&to={fecha_fin}&page={pagina}'
-        res = self.request_api(endpoint)
-        pp(res)
-        return res
+        return self.request_api(endpoint)
+
