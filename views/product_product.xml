@@ -12,6 +12,9 @@
                         <group name="datos_tienda_pe_product">
                             <field name="mitienda_id" readonly="1" />
                             <field name="mitienda_sku" />
+                            <button name="verificar_sku" string="Verificar SKU"
+                                type="object" class="btn btn-primary">
+                            </button>
                         </group>
                     </page>
                 </xpath>

@@ -27,8 +27,14 @@ class ProductTemplate(models.Model):
         res.extend(['mitienda_sku', 'mitienda_id'])
         return res
 
+    def verificar_sku(self):
+        return True
+
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
     mitienda_id = fields.Integer(string='ID')
     mitienda_sku = fields.Char(string='SKU', tracking=True, copy=False)
+
+    def verificar_sku(self):
+        return True
