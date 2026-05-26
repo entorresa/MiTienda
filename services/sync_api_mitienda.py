@@ -11,17 +11,18 @@ class SyncAPIMiTienda:
         conexion = RequestApiMiTienda(self.env)
         self.conexion_id = conexion.conexion_id
 
-    def sincronizar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today()):
+    def sincronizar_ventas(self, fecha_inicio=fields.Date.today(), fecha_fin=fields.Date.today(), headless=False):
         # Llamar a buscar_ventas con los parámetros fecha_inicio y fecha_fin
         error = False
-        mensaje = 'Sincronización finalizada con éxito'
+        mensaje = ''
         contador_total = 0
         contador_exito = 0
         contador_error = 0
         if not self.conexion_id:
-            raise ValidationError('Debe establecer una conexión activa para la compañía actual')
+            raise Exception('Debe establecer una conexión activa para la compañía actual')
         try:
-            self.registrar_bitacora_venta(mensaje="Sincronización de ventas iniciada")
+            mensaje = "Sincronización automática de ventas iniciada" if headless else "Sincronización de ventas iniciada"
+            self.registrar_bitacora_venta(mensaje=mensaje)
             estado = True
             pagina = 1
             ventas_api_codes = []
@@ -41,7 +42,7 @@ class SyncAPIMiTienda:
                 pagina += 1
             # -------------------------------
             if len(ventas_api_codes) > 50:
-                raise ValidationError(f'Restricción de 50 ventas para sincronizar, total de ventas en el rango de fechas: {len(ventas_api_codes)}')
+                raise Exception(f'Restricción de 50 ventas para sincronizar, total de ventas en el rango de fechas: {len(ventas_api_codes)}')
             # Para cada code llamar a buscar_venta pasando el parámetro code
             if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 50:
                 for venta_code in ventas_api_codes:
@@ -131,22 +132,23 @@ class SyncAPIMiTienda:
                 error=True,
             )
         finally:
-            self.registrar_bitacora_venta(mensaje="Sincronización de ventas finalizada")
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Error' if error else 'Éxito',
-                    'message': mensaje,
-                    'type': 'danger' if (error and contador_error == 0) else ('warning' if contador_error > 0 else 'success'),
-                    'sticky': False,
-                    'next': {
-                        'type': 'ir.actions.client',
-                        'tag': 'soft_reload',
+            mensaje = "Sincronización automática de ventas finalizada" if headless else "Sincronización de ventas finalizada"
+            self.registrar_bitacora_venta(mensaje=mensaje)
+            if not headless:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Error' if error else 'Éxito',
+                        'message': mensaje,
+                        'type': 'danger' if (error and contador_error == 0) else ('warning' if contador_error > 0 else 'success'),
+                        'sticky': False,
+                        'next': {
+                            'type': 'ir.actions.client',
+                            'tag': 'soft_reload',
+                        },
                     },
-                },
-            }
-
+                }
 
     def buscar_cliente(self, id, email, doc_number):
         domain = []
