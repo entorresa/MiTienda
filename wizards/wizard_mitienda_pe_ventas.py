@@ -32,4 +32,4 @@ class WizardMiTiendaPeVentas(models.TransientModel):
 
     @api.model
     def cron_sincronizar_venta(self):
-        return SyncAPIMiTienda(self.env).sincronizar_ventas()
+        return SyncAPIMiTienda(self.env).sincronizar_ventas(headless=True)
