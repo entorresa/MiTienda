@@ -21,6 +21,8 @@
         'views/product_template.xml',
         'wizards/wizard_mitienda_pe_ventas.xml',
         'views/menu.xml',
+        # ----------accion planificada---------
+        'accion_planificada/sincronizar.xml',
         ],
     'demo': [],
     'license': 'GPL-3',
