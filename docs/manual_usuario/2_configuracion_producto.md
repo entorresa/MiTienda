@@ -9,13 +9,13 @@
 ### Registrar producto y establecer un SKU
 Antes de realizar la sincronización de ventas, debe registrar todos los productos de ventas que existen en el sistema externo.
 
-La sincronización de ventas del modulo MiTienda.pe __NO CREA PRODUCTOS__.
+La sincronización de ventas del modulo MiTienda.pe __NO REGISTRA PRODUCTOS AUTOMÁTICAMENTE__.
 
 Para registrar un producto que no tiene variantes, debe registrar desde menu `ventas/Productos`.
 
 ![Productos](/docs/assets/productos/1_registrar_producto.png)
 
--   Se debe establecer el **`SKU`** en la pestaña de `MiTienda.pe`. La sincronización de ventas buscará el producto atravez del **SKU**. si el producto no existe en odoo la venta no se registrará.
+-   Se debe establecer el **`SKU`** en la pestaña de `MiTienda.pe`. La sincronización de ventas buscará cada producto mediante del **SKU**. si el producto no existe en Odoo la venta no se registrará.
 
 ![registro de sku](/docs/assets/productos/2_registrar_producto.png)
 

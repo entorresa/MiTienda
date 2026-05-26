@@ -4,7 +4,7 @@
 
 ### Introducción
 
-El presente módulo descarga datos de ventas y clientes para registrarlos en Odoo y actualiza el stock de inventarios en MiTienda.pe de acuerdo a las operaciones de albarán.
+El presente módulo descarga datos de ventas y clientes para registrarlos en Odoo.
 
 ### Índice
 
