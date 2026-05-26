@@ -28,16 +28,27 @@ class WizardMiTiendaPeVentas(models.TransientModel):
         if not self.conexion_id:
             raise ValidationError('Debe establecer una conexión activa para la compañía actual')
         try:
-            respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
-            if not respuesta.get('success', False):
-                raise Exception(respuesta.get('error', {}).get('message', 'Error'))
+            bandera = True
+            pagina = 1
             ventas_api_codes = []
-            if len(respuesta['data']) > 0:
-                for data in respuesta['data']:
-                    # Buscar ventas sale.order
-                    obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
-                    if not obj_venta:
-                        ventas_api_codes.append(data['code'])
+            while bandera:
+                respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin, pagina=pagina)
+
+                if not respuesta.get('success', False):
+                    bandera = False
+                    raise Exception(respuesta.get('error', {}).get('message', 'Error'))
+                if len(respuesta['data']) > 0:
+                    for data in respuesta['data']:
+                        # Buscar ventas sale.order
+                        obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
+                        if not obj_venta:
+                            ventas_api_codes.append(data['code'])
+                if not respuesta['pagination']['next']:
+                    bandera=False
+                if len(respuesta['data']) == 0 and respuesta['pagination']['total'] == 0:
+                    bandera = False
+                pagina+=1
+            # -------------------------------
             if len(ventas_api_codes) > 50:
                 raise ValidationError(f'Restricción de 50 ventas para sincronizar, total de ventas en el rango de fechas: {len(ventas_api_codes)}')
             # Para cada code llamar a buscar_venta pasando el parámetro code
