@@ -21,6 +21,7 @@ class SyncAPIMiTienda:
         if not self.conexion_id:
             raise ValidationError('Debe establecer una conexión activa para la compañía actual')
         try:
+            self.registrar_bitacora_venta(mensaje="Sincronización de ventas iniciada")
             bandera = True
             pagina = 1
             ventas_api_codes = []
@@ -133,6 +134,7 @@ class SyncAPIMiTienda:
                 error=True,
             )
         finally:
+            self.registrar_bitacora_venta(mensaje="Sincronización de ventas finalizada")
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
