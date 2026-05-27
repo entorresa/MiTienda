@@ -44,7 +44,7 @@ class SyncAPIMiTienda:
             if len(ventas_api_codes) > 50:
                 raise Exception(f'Restricción de 50 ventas para sincronizar, total de ventas en el rango de fechas: {len(ventas_api_codes)}')
             # Para cada code llamar a buscar_venta pasando el parámetro code
-            if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 50:
+            if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 90:
                 for venta_code in ventas_api_codes:
                     respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
                     if respuesta['success'] is True:
