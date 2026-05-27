@@ -1,5 +1,5 @@
 ---
-### 4. Bitácora de sincronización de ventas
+### 5. Bitácora de sincronización de ventas
 ---
 
 ### Procedimiento
