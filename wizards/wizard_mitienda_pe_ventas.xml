@@ -21,6 +21,9 @@
                             <field name="total_por_sincronizar" readonly="1"/>
                         </group>
                         <footer>
+                            <button name="verificar" string="Verificar"
+                                type="object" class="btn btn-primary" options="{'close':False}"/>
+
                             <button name="sincronizar" string="Sincronizar"
                                 type="object" class="btn btn-primary"/>
                             <button string="Cancelar"
