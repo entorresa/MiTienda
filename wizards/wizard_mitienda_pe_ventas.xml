@@ -18,14 +18,15 @@
                             <field name="fecha_fin" />
                             <field name="url" />
                             <field name="entorno" />
-                            <field name="total_por_sincronizar" readonly="1"/>
+                            <field name="total_por_sincronizar" readonly="1" />
                         </group>
                         <footer>
                             <button name="verificar" string="Verificar"
                                 type="object" class="btn btn-primary" options="{'close':False}"/>
 
                             <button name="sincronizar" string="Sincronizar"
-                                type="object" class="btn btn-primary"/>
+                                type="object" class="btn btn-primary"
+                                invisible="total_por_sincronizar == 0 or total_por_sincronizar &gt; 90" />
                             <button string="Cancelar"
                                 special="cancel" class="btn btn-danger" />
                         </footer>
