@@ -13,3 +13,4 @@ El presente módulo descarga datos de ventas y clientes para registrarlos en Odo
 3. [Sincronización manual de ventas](/docs/manual_usuario/3_sincronizacion_ventas_manual.md)
 4. [Bitácora de sincronización de clientes](/docs/manual_usuario/4_bitacora_clientes.md)
 5. [Bitácora de sincronización de ventas](/docs/manual_usuario/5_bitacora_ventas.md)
+6. [Configuración de la acción planificada](/docs/manual_usuario/6_manual_accion_planificada.md)
