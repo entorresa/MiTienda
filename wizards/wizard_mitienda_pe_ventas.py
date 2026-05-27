@@ -12,6 +12,7 @@ class WizardMiTiendaPeVentas(models.TransientModel):
     fecha_fin = fields.Date(string="Fecha fin", required=True, default=fields.Date.today())
     url = fields.Char(string='API Host', related='conexion_id.url', readonly=True)
     entorno = fields.Selection(string='Entorno', related='conexion_id.entorno', readonly=True)
+    total_por_sincronizar = fields.Integer(string="Total ventas para sincronizar", default=0)
 
     @api.constrains('fecha_inicio', 'fecha_fin')
     def validar(self):
@@ -19,6 +20,45 @@ class WizardMiTiendaPeVentas(models.TransientModel):
             if record.fecha_fin and record.fecha_inicio and record.fecha_fin < record.fecha_inicio:
                 raise ValidationError("Fecha inicio debe ser igual o anterior a fecha fin")
 
+    def reiniciar_verificacion(self):
+        self.write({
+            'total_por_sincronizar': 0,
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id':self.id,
+            'view_mode':'form',
+            'target': 'new',
+        }
+
+    def verificar(self):
+        self.write({
+            'total_por_sincronizar': 0,
+        })
+        respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
+        if respuesta.get('success', False):
+            self.write({
+                'total_por_sincronizar': respuesta['pagination']['total'],
+            })
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': self._name,
+                'res_id':self.id,
+                'view_mode':'form',
+                'target': 'new',
+            }
+        else:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'message': respuesta['error']['message'] if respuesta.get('success', False) is False else 'Error de conexión con la API',
+                    'type': 'danger',
+                    'sticky': False,
+                },
+            }
     def sincronizar(self):
         return SyncAPIMiTienda(self.env).sincronizar_ventas(fecha_inicio=self.fecha_inicio, fecha_fin=self.fecha_fin)
 
