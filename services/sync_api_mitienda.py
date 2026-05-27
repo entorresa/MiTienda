@@ -26,8 +26,10 @@ class SyncAPIMiTienda:
             estado = True
             pagina = 1
             ventas_api_codes = []
+            conteo_requests = 0
             while estado:
                 respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, pagina=pagina)
+                conteo_requests += 1
                 estado = respuesta.get('success', False)
                 if not estado:
                     raise Exception(respuesta.get('error', {}).get('message', 'Error'))
@@ -41,8 +43,9 @@ class SyncAPIMiTienda:
                     estado = False
                 pagina += 1
             # -------------------------------
-            if len(ventas_api_codes) > 50:
-                raise Exception(f'Restricción de 50 ventas para sincronizar, total de ventas en el rango de fechas: {len(ventas_api_codes)}')
+            conteo_requests += len(ventas_api_codes)
+            if conteo_requests > 100:
+                raise Exception(f'Límite de número de consultas excedido: {len(conteo_requests)}')
             # Para cada code llamar a buscar_venta pasando el parámetro code
             if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 90:
                 for venta_code in ventas_api_codes:
