@@ -12,3 +12,8 @@ class MiTiendaPeProduct(models.Model):
     fecha_sincronizacion = fields.Datetime(string="Fecha de sincronización", default=fields.Datetime.now)
     company_id = fields.Many2one(string="Compañía", comodel_name="res.company", required=True, default=lambda self: self.env.company)
     stock_picking_id = fields.Many2one(string="Operación de albarán", comodel_name="stock.picking")
+    stock_inicial = fields.Float(string="Stock inicial")
+    stock_ajuste = fields.Float(string="Incremento/Decremento")
+    stock_final = fields.Float(string="Stock final")
+    mitienda_id = fields.Integer(string="ID MiTienda", related="product_product_id.mitienda_id")
+    mitienda_sku = fields.Char(string="SKU", related="product_product_id.mitienda_sku")
