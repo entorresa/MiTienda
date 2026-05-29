@@ -11,10 +11,10 @@ class StockPicking(models.Model):
         try:
             res = super().button_validate()
             for picking in self:
-                if picking.state == 'done' and (not picking.sale_id or (picking.sale_id.mitienda_id == 0 and not picking.sale_id.mitienda_code)):
+                if picking.state == 'done' and (not picking.sale_id or (picking.sale_id.mitienda_id == 0 and not picking.sale_id.mitienda_code)) and picking.location_id.id != picking.location_dest_id.id:
                     conexion = RequestApiMiTienda(picking.env)
                     for line in picking.move_ids:
-                        if line.product_id.mitienda_id != 0 or line.product_id.mitienda_sku != None:
+                        if line.product_id.is_storable and (line.product_id.mitienda_id != 0 or line.product_id.mitienda_sku):
                             if picking.picking_type_id.code == 'incoming' or picking.picking_type_id.code == 'outgoing':
                                 respuesta = conexion.buscar_producto(id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                 if respuesta['success'] is True:
@@ -56,6 +56,7 @@ class StockPicking(models.Model):
             return res
         except Exception as e:
             _logger.error(str(e))
+
     def registrar_bitacora_producto(self, conexion_id=None, product_temp_id=None, product_product_id=None, picking_id=None, stock_inicial=0, stock_ajuste=0, mitienda_id=None, mitienda_sku=None):
         self.env['mitienda.pe.product'].create({
             'conexion_id': conexion_id,
