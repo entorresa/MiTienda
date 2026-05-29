@@ -15,7 +15,7 @@ class RequestApiMiTienda:
             'Authorization': f"Bearer {self.conexion_id.token}",
         }
 
-    def request_api(self, endpoint, notificacion=False, mensaje='Éxito'):
+    def request_api(self, endpoint, notificacion=False, mensaje='Éxito', operacion='GET', datos={}):
         data = {
             'success': False,
             'error': {
@@ -29,7 +29,10 @@ class RequestApiMiTienda:
             if self.conexion_id.token_expiracion < fields.Date.today() or not self.conexion_id:
                 data['error']['message'] = 'Token API expirado' if self.conexion_id.token_expiracion < fields.Date.today() else 'No se encontró una conexión activa'
             else:
-                respuesta = requests.get(self.conexion_id.url + endpoint, headers=self.cabecera, timeout=self.conexion_id.timeout_api)
+                if operacion == 'PUT':
+                    respuesta = requests.put(self.conexion_id.url + endpoint, headers=self.cabecera,json=datos, timeout=self.conexion_id.timeout_api)
+                else:
+                    respuesta = requests.get(self.conexion_id.url + endpoint, headers=self.cabecera, timeout=self.conexion_id.timeout_api)
                 respuesta.raise_for_status()
                 data = respuesta.json()
         except requests.exceptions.HTTPError as e:
