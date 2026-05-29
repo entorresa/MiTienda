@@ -82,3 +82,10 @@ class RequestApiMiTienda:
         else:
             endpoint = f'/product/sku/{sku}'
         return self.request_api(endpoint)
+
+    def actualizar_producto(self, datos, id=0, sku=None):
+        if id > 0:
+            endpoint = f'/product/{id}/stock'
+        else:
+            endpoint = f'/product/sku/{sku}/stock'
+        return self.request_api(endpoint, operacion='PUT', datos=datos)
