@@ -18,7 +18,7 @@
                                 </button>
                             </group>
                             <group>
-                                <field name="mitienda_sincronizar_stock" />
+                                <field name="mitienda_sincronizar_stock" invisible="not is_storable or not mitienda_sku or mitienda_id == 0" />
                             </group>
                         </group>
                     </page>
