@@ -44,6 +44,12 @@
         sequence="20"
         action="api_mitienda_peru.action_mi_tienda_pe_sale_order" />
 
+    <menuitem id="bitacora_productos"
+        name="Productos"
+        parent="api_mitienda_peru.menu_root_bitacora"
+        sequence="30"
+        action="api_mitienda_peru.action_mi_tienda_pe_product" />
+
     <!-- Submenus de sincronizacion -->
     <menuitem id="sincronizacion_ventas"
         name="Ventas"
