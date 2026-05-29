@@ -1,5 +1,8 @@
 from odoo import api, models, fields
 from ..services.request_api_mitienda import RequestApiMiTienda
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
@@ -35,19 +38,22 @@ class StockPicking(models.Model):
                                                                         stock_ajuste= stock_ajuste,
                                                                         mitienda_id= respuesta['data']['id'],
                                                                         mitienda_sku= respuesta['data']['sku'])
-                                if conexion.conexion_id.entorno == 'pruebas':
-                                    datos = {'stock': stock_inicial}
-                                    print(f"Restaurando stock a: {stock_inicial}")
-                                    respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
-                                    if respuesta2['success'] is True:
-                                        self.registrar_bitacora_producto(conexion.conexion_id.id,
-                                                                            product_temp_id = line.product_id.product_tmpl_id.id,
-                                                                            product_product_id = line.product_id.id,
-                                                                            picking_id = picking.id,
-                                                                            stock_inicial = stock,
-                                                                            stock_ajuste = stock_ajuste_prueba,
-                                                                            mitienda_id = respuesta['data']['id'],
-                                                                            mitienda_sku = respuesta['data']['sku'])
+                                    if conexion.conexion_id.entorno == 'pruebas':
+                                        datos = {'stock': stock_inicial}
+                                        print(f"Restaurando stock a: {stock_inicial}")
+                                        respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
+                                        if respuesta2['success'] is True:
+                                            self.registrar_bitacora_producto(conexion.conexion_id.id,
+                                                                                product_temp_id = line.product_id.product_tmpl_id.id,
+                                                                                product_product_id = line.product_id.id,
+                                                                                picking_id = picking.id,
+                                                                                stock_inicial = stock,
+                                                                                stock_ajuste = stock_ajuste_prueba,
+                                                                                mitienda_id = respuesta['data']['id'],
+                                                                                mitienda_sku = respuesta['data']['sku'])
+                                else:
+                                    if respuesta2['success'] is False:
+                                        _logger.error(respuesta2['error']['message'])
         return res
 
     def registrar_bitacora_producto(self, conexion_id=None, product_temp_id=None, product_product_id=None, picking_id=None, stock_inicial=0, stock_ajuste=0, mitienda_id=None, mitienda_sku=None):
