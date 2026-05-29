@@ -15,6 +15,12 @@ class MiTiendaPeProduct(models.Model):
     stock_picking_id = fields.Many2one(string="Operación de albarán", comodel_name="stock.picking")
     stock_inicial = fields.Float(string="Stock inicial")
     stock_ajuste = fields.Float(string="Incremento/Decremento")
-    stock_final = fields.Float(string="Stock final")
+    stock_final = fields.Float(string="Stock final", compute="_calcular_stock_final", store=True)
     mitienda_id = fields.Integer(string="ID MiTienda", related="product_product_id.mitienda_id")
     mitienda_sku = fields.Char(string="SKU", related="product_product_id.mitienda_sku")
+
+    @api.depends('stock_inicial', 'stock_ajuste')
+    def _calcular_stock_final(self):
+        for record in self:
+            record.stock_final =  record.stock_inicial + record.stock_ajuste
+
