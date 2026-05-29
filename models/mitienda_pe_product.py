@@ -4,7 +4,8 @@ from odoo import api, models, fields
 class MiTiendaPeProduct(models.Model):
     _name = "mitienda.pe.product"
     _description = "Bitácora de sincronización de stock"
-    _rec_name = "fecha_sincronizacion desc"
+    _order = "fecha_sincronizacion desc"
+    _rec_name = "fecha_sincronizacion"
 
     conexion_id = fields.Many2one(string="Conexión", comodel_name="mitienda.pe.conexion", required=True)
     product_template_id = fields.Many2one(string="Producto", comodel_name="product.template")

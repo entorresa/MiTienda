@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="dte_view_form_mitienda_pe_product" model="ir.ui.view">
+            <field name="name">dte_view_form_mitienda_pe_product</field>
+            <field name="model">mitienda.pe.product</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group string="Sincronización">
+                                <field name="fecha_sincronizacion" />
+                                <field name="conexion_id" />
+                                <field name="company_id" invisible="1" />
+                            </group>
+                            <group string="inventario">
+                                <field name="product_template_id" />
+                                <field name="product_product_id" />
+                                <field name="stock_picking_id" />
+                                <field name="stock_inicial" />
+                                <field name="stock_ajuste" />
+                                <field name="stock_final" />
+                                <field name="mitienda_id" />
+                                <field name="mitienda_sku" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="dte_view_list_mitienda_pe_product" model="ir.ui.view">
+            <field name="name">dte_view_list_mitienda_pe_product</field>
+            <field name="model">mitienda.pe.product</field>
+            <field name="arch" type="xml">
+                <list string="Bitácora de inventario" create="0" edit="0" delete="0">
+                    <field name="fecha_sincronizacion" />
+                    <field name="product_template_id" widget="many2one_link" />
+                    <field name="product_product_id" />
+                    <field name="stock_inicial" />
+                    <field name="stock_ajuste" />
+                    <field name="stock_final" />
+                    <field name="company_id" optional="hide" />
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>
