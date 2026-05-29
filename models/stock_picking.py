@@ -16,7 +16,7 @@ class StockPicking(models.Model):
                 conexion = RequestApiMiTienda(picking.env)
                 for line in picking.move_ids:
                     if line.product_id.mitienda_id != 0 or line.product_id.mitienda_sku != None:
-                        if (picking.picking_type_id.code == 'incoming' and conexion.conexion_id.sync_recepcion) or (picking.picking_type_id.code == 'outgoing' and conexion.conexion_id.sync_entrega):
+                        if picking.picking_type_id.code == 'incoming' or picking.picking_type_id.code == 'outgoing':
                             respuesta = conexion.buscar_producto(id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                             if respuesta['success'] is True:
                                 stock_inicial = respuesta['data']['stock']
@@ -40,7 +40,7 @@ class StockPicking(models.Model):
                                                                         mitienda_sku= respuesta['data']['sku'])
                                     if conexion.conexion_id.entorno == 'pruebas':
                                         datos = {'stock': stock_inicial}
-                                        print(f"Restaurando stock a: {stock_inicial}")
+                                        _logger.info(f"Restaurando stock de: {stock} a: {stock_inicial}")
                                         respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                         if respuesta2['success'] is True:
                                             self.registrar_bitacora_producto(conexion.conexion_id.id,
