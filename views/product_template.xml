@@ -8,12 +8,17 @@
             <field name="arch" type="xml">
                 <xpath expr="//notebook//page[@name='inventory']" position="after">
                     <page name="mitienda_pe" string="MiTienda.pe" invisible="product_variant_count &gt; 1">
-                        <group name="datos_tienda_pe">
-                            <field name="mitienda_id" readonly="1" />
-                            <field name="mitienda_sku" />
-                            <button name="verificar_sku" string="Verificar SKU"
-                                type="object" class="btn btn-primary">
-                            </button>
+                        <group>
+                            <group name="datos_tienda_pe">
+                                <field name="mitienda_id" readonly="1" />
+                                <field name="mitienda_sku" />
+                                <button name="verificar_sku" string="Verificar SKU"
+                                    type="object" class="btn btn-primary">
+                                </button>
+                            </group>
+                            <group>
+                                <field name="mitienda_sincronizar_stock" />
+                            </group>
                         </group>
                     </page>
                 </xpath>
