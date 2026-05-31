@@ -5,22 +5,29 @@ from ..services.sync_api_mitienda import SyncAPIMiTienda
 
 class MiTiendaSaleOrderController(http.Controller):
 
-    #@http.route('/webhook/sale_order', type='http', auth='public', csrf=False, methods=['POST'])
-    @http.route('/webhook/sale_order', type='http', auth='bearer', csrf=False, methods=['POST'])
+    #@http.route('/webhook/sale_order', type='http', auth='bearer', csrf=False, methods=['POST'])
+    @http.route('/webhook/sale_order', type='http', auth='public', csrf=False, methods=['POST'])
     def webhook_sale_order(self, **kwargs):
         try:
             body = json.loads(request.httprequest.data.decode('utf-8'))
-            if body['object'] == 'order' and body['status'] == 1:
-                obj_venta = request.env['sale.order'].search([('mitienda_id', '=', body['id'])])
+            obj_company = request.env["res.company"].sudo().search([])
+            user = request.env.ref('base.user_root') # super usuario
+            if body['object'] == 'order' and body['status'] == 1 and len(obj_company) == 1 and user:
+                # establecer usuario a ENV, para facilitar consultas sin autenticacion y para no usar sudo()
+                # usar env para consultas y llamadas a metodo externos de controller
+                env = request.env(user=user.id)
+                #---------------------------------------------------------------------
+                obj_venta = env['sale.order'].search([('mitienda_id', '=', body['id'])])
                 if not obj_venta:
-                    sincronizacion = SyncAPIMiTienda(request.env)
+                    sincronizacion = SyncAPIMiTienda(env)
+                    print("sincronizacion:", sincronizacion)
                     # buscar cliente
                     obj_cliente = sincronizacion.buscar_cliente(id=body['customer'].get('id'), email=body['billing_info']['email'], doc_number=body['billing_info']['doc_number'])
-                    obj_bitacora_cliente = request.env['mitienda.pe.partner'].search(['|', ('mitienda_doc_number', '=', body['billing_info']['doc_number']),
+                    obj_bitacora_cliente = env['mitienda.pe.partner'].search(['|', ('mitienda_doc_number', '=', body['billing_info']['doc_number']),
                                                                                 ('mitienda_email', '=', body['billing_info']['email'])], limit=1, order="id desc")
                     if not obj_cliente:
                         # registra nuevo cliente
-                        obj_cliente = request.env['res.partner'].create({
+                        obj_cliente = env['res.partner'].create({
                             'name': f"{body['billing_info']['name']} {body['billing_info']['last_name']}",
                             'email': body['billing_info']['email'],
                             'vat': body['billing_info']['doc_number'],
