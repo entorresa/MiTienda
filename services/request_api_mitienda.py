@@ -60,7 +60,7 @@ class RequestApiMiTienda:
                 return data
 
     def probar_conexion(self):
-        endpoint = '/mitienda/paymentlinks'
+        endpoint = '/brands?offset=0&perpage=1'
         return self.request_api(endpoint, True, 'Conexión establecida')
 
     def buscar_venta(self, id=0, code=None):

@@ -49,16 +49,36 @@ class ProductProduct(models.Model):
     def verificar_sku(self):
         if self.mitienda_sku:
             respuesta = RequestApiMiTienda(self.env).buscar_producto(sku=self.mitienda_sku)
-            if respuesta['success'] is True and self.mitienda_id != respuesta['data']['id']:
-                self.write({'mitienda_id': respuesta['data']['id']})
-            else:
-                self.write({'mitienda_id': False})
+            if respuesta['success'] is True:
+                mensaje = 'SKU verificado'
+                if self.mitienda_id != respuesta['data']['id']:
+                    self.write({
+                        'mitienda_id': respuesta['data']['id'],
+                        'mitienda_sincronizar_stock': respuesta.get('data', {}).get('unlimited_stock', True) is False and respuesta.get('data', {}).get('has_variation_attributes', True) is False,
+                    })
+                if respuesta.get('data', {}).get('unlimited_stock', True) or respuesta.get('data', {}).get('has_variation_attributes', True):
+                    self.write({
+                        'mitienda_sincronizar_stock': False,
+                    })
+                    if respuesta.get('data', {}).get('unlimited_stock', True):
+                        mensaje += '. Producto con stock ilimitado en MiTienda'
+                    else:
+                        mensaje += '. Producto con variantes en MiTienda'
+                else:
+                    mensaje += f". Stock actual en MiTienda: {respuesta.get('data', {}).get('stock', 0)} unidades"
+            if respuesta['success'] is False:
+                mensaje = respuesta['error']['message']
+                if self.mitienda_id > 0:
+                    self.write({
+                        'mitienda_id': False,
+                        'mitienda_sincronizar_stock': False,
+                    })
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
                     'title': 'Error' if respuesta['success'] is False else 'Éxito',
-                    'message': 'SKU verificado' if respuesta['success'] else respuesta['error']['message'],
+                    'message': mensaje,
                     'type': 'danger' if respuesta['success'] is False else 'success',
                     'sticky': False,
                     'next': {
