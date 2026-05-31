@@ -43,8 +43,6 @@ class MiTiendaPeConexion(models.Model):
         required=True,
     )
     mensaje_sync_cliente = fields.Char(string="mensaje", compute='_mensaje_sync_cliente', store=False)
-    sync_recepcion = fields.Boolean(string="Recepciones", default=False)
-    sync_entrega = fields.Boolean(string="Entregas", default=False)
 
     @api.depends('url', 'entorno')
     def _compute_name(self):
