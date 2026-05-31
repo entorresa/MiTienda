@@ -14,7 +14,7 @@ class StockPicking(models.Model):
                 if picking.state == 'done' and (not picking.sale_id or (picking.sale_id.mitienda_id == 0 and not picking.sale_id.mitienda_code)) and picking.location_id.id != picking.location_dest_id.id:
                     conexion = RequestApiMiTienda(picking.env)
                     for line in picking.move_ids:
-                        if line.product_id.is_storable and (line.product_id.mitienda_id != 0 or line.product_id.mitienda_sku):
+                        if line.product_id.is_storable and line.product_id.mitienda_sincronizar_stock and (line.product_id.mitienda_id != 0 or line.product_id.mitienda_sku):
                             if picking.picking_type_id.code == 'incoming' or picking.picking_type_id.code == 'outgoing':
                                 respuesta = conexion.buscar_producto(id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                 if respuesta['success'] is True:
