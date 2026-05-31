@@ -26,6 +26,9 @@ class StockPicking(models.Model):
                                         stock_ajuste = -line.quantity
                                         stock_ajuste_prueba = line.quantity
                                     stock = stock_inicial + stock_ajuste
+                                    stock_prueba = stock
+                                    if stock < 0:
+                                        stock=0
                                     datos = {'stock': stock}
                                     respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                     if respuesta2['success'] is True:
@@ -46,7 +49,7 @@ class StockPicking(models.Model):
                                                                                     product_temp_id = line.product_id.product_tmpl_id.id,
                                                                                     product_product_id = line.product_id.id,
                                                                                     picking_id = picking.id,
-                                                                                    stock_inicial = stock,
+                                                                                    stock_inicial = stock_prueba,
                                                                                     stock_ajuste = stock_ajuste_prueba,
                                                                                     mitienda_id = respuesta['data']['id'],
                                                                                     mitienda_sku = respuesta['data']['sku'])
