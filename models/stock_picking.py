@@ -27,9 +27,7 @@ class StockPicking(models.Model):
                                         stock_ajuste_prueba = line.quantity
                                     stock = stock_inicial + stock_ajuste
                                     stock_prueba = stock
-                                    if stock < 0:
-                                        stock=0
-                                    datos = {'stock': stock}
+                                    datos = {'stock': stock if stock > 0 else 0}
                                     respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                     if respuesta2['success'] is True:
                                         self.registrar_bitacora_producto(conexion_id=conexion.conexion_id.id,
@@ -56,9 +54,10 @@ class StockPicking(models.Model):
                                     else:
                                         if respuesta2['success'] is False:
                                             _logger.error(respuesta2['error']['message'])
-            return res
         except Exception as e:
             _logger.error(str(e))
+        finally:
+            return res
 
     def registrar_bitacora_producto(self, conexion_id=None, product_temp_id=None, product_product_id=None, picking_id=None, stock_inicial=0, stock_ajuste=0, mitienda_id=None, mitienda_sku=None):
         self.env['mitienda.pe.product'].create({
