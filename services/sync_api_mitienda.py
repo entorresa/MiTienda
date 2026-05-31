@@ -78,7 +78,7 @@ class SyncAPIMiTienda:
                                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                                         })
                                         # registra en bitacora de clientes
-                                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
+                                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta['data']['billing_info'], obj_cliente)
 
                             # Buscar productos de Odoo por SKU
                             skus_inexistentes = []
@@ -227,10 +227,10 @@ class SyncAPIMiTienda:
             'fecha_sincronizacion': fields.Datetime.now(),
             'company_id': self.env.company.id,
             'partner_id': obj_cliente.id,
-            'mitienda_name': respuesta['data']['billing_info']['name'],
-            'mitienda_last_name': respuesta['data']['billing_info']['last_name'],
-            'mitienda_email': respuesta['data']['billing_info']['email'],
-            'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
+            'mitienda_name': respuesta['name'],
+            'mitienda_last_name': respuesta['last_name'],
+            'mitienda_email': respuesta['email'],
+            'mitienda_doc_number': respuesta['doc_number'],
         })
         return obj_bitacora_cliente
 
