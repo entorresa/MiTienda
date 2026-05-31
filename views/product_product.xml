@@ -9,12 +9,17 @@
                 <xpath expr="//notebook" position="inside">
                     <page name="mitienda_pe_product" string="MiTienda.pe"
                         invisible="product_variant_count &lt;= 1">
-                        <group name="datos_tienda_pe_product">
-                            <field name="mitienda_id" readonly="1" />
-                            <field name="mitienda_sku" />
-                            <button name="verificar_sku" string="Verificar SKU"
-                                type="object" class="btn btn-primary">
-                            </button>
+                        <group>
+                            <group name="datos_tienda_pe_product">
+                                <field name="mitienda_id" readonly="1" />
+                                <field name="mitienda_sku" />
+                                <button name="verificar_sku" string="Verificar SKU"
+                                    type="object" class="btn btn-primary">
+                                </button>
+                            </group>
+                            <group>
+                                <field name="mitienda_sincronizar_stock" invisible="not is_storable or not mitienda_sku or mitienda_id == 0" />
+                            </group>
                         </group>
                     </page>
                 </xpath>
