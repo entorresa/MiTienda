@@ -18,6 +18,12 @@ class StockPicking(models.Model):
                             if picking.picking_type_id.code == 'incoming' or picking.picking_type_id.code == 'outgoing':
                                 respuesta = conexion.buscar_producto(id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                 if respuesta['success'] is True:
+                                    if (respuesta.get('data', {}).get('unlimited_stock', True) or respuesta.get('data', {}).get('has_variation_attributes', True)) and line.product_id.mitienda_sincronizar_stock:
+                                        line.product_id.write({
+                                            'mitienda_sincronizar_stock': False,
+                                        })
+                                        _logger.info(f"Deshabilitada sincronización de stock de producto {line.product_id.name}. Habilitar el control de stock en MiTienda para sincronizar stock")
+                                        continue
                                     stock_inicial = respuesta['data']['stock']
                                     if picking.picking_type_id.code == 'incoming':
                                         stock_ajuste = line.quantity
@@ -27,7 +33,9 @@ class StockPicking(models.Model):
                                         stock_ajuste_prueba = line.quantity
                                     stock = stock_inicial + stock_ajuste
                                     stock_prueba = stock
-                                    datos = {'stock': stock if stock > 0 else 0}
+                                    # TODO: Parametrizar el límite mínimo de stock negativo para sincronizar
+                                    # datos = {'stock': stock if stock > 0 else 0}
+                                    datos = {'stock': stock}
                                     respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                     if respuesta2['success'] is True:
                                         self.registrar_bitacora_producto(conexion_id=conexion.conexion_id.id,
@@ -40,7 +48,7 @@ class StockPicking(models.Model):
                                                                             mitienda_sku= respuesta['data']['sku'])
                                         if conexion.conexion_id.entorno == 'pruebas':
                                             datos = {'stock': stock_inicial}
-                                            _logger.info(f"Restaurando stock de: {stock} a: {stock_inicial}")
+                                            _logger.info(f"Restaurando stock de producto {line.product_id.name} de: {stock} a {stock_inicial}")
                                             respuesta2 = conexion.actualizar_producto(datos=datos, id=line.product_id.mitienda_id, sku=line.product_id.mitienda_sku)
                                             if respuesta2['success'] is True:
                                                 self.registrar_bitacora_producto(conexion.conexion_id.id,

@@ -35,13 +35,6 @@
                                 <group colspan="2" string="Sincronización de ventas">
                                     <field name="sync_venta_logica" />
                                 </group>
-                                <group colspan="2" string="Sincronización de inventario">
-                                    <field name="sync_recepcion" widget="boolean_toggle" />
-                                    <field name="sync_entrega" widget="boolean_toggle" />
-                                </group>
-                                <!-- <group colspan="2" string="Sincronización de productos">
-                                    <field name="sync_cliente_logica" />
-                                </group> -->
                             </group>
                         </group>
                     </sheet>
@@ -58,8 +51,6 @@
                     <field name="token_expiracion" />
                     <field name="timeout_api" />
                     <field name="activo" widget="boolean_toggle" />
-                    <field name="sync_recepcion" widget="boolean_toggle" />
-                    <field name="sync_entrega" widget="boolean_toggle" />
                 </list>
             </field>
         </record>
