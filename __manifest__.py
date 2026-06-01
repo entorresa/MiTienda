@@ -8,7 +8,7 @@
     'author': "DTE S.R.L.",
     'website': "https://www.dte.com.bo",
     'category': 'Sales/Sales',
-    'version': '2.0.0',
+    'version': '3.0.0',
     'depends': ['base', 'sale_management'],
     'data': [
         'security/ir.model.access.csv',
