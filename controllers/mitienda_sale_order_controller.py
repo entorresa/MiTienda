@@ -10,9 +10,13 @@ class MiTiendaSaleOrderController(http.Controller):
     def webhook_sale_order(self, **kwargs):
         try:
             body = json.loads(request.httprequest.data.decode('utf-8'))
+            if body['object'] != 'order' and body['status'] != 1:
+                raise Exception('El estado de la venta debe ser igual a 1')
             obj_company = request.env["res.company"].sudo().search([])
             user = request.env.ref('base.user_root') # super usuario
-            if body['object'] == 'order' and body['status'] == 1 and len(obj_company) == 1 and user:
+            if len(obj_company) == 1 and user and 'id' in body and 'code' in body and 'billing_info' in body and 'customer' in body and 'items' in body:
+                if len(body['items']) == 0:
+                    raise Exception('Solo se pueden registrar ventas con uno mas items')
                 # establecer usuario a ENV, para facilitar consultas sin autenticacion y para no usar sudo()
                 # usar env para consultas y llamadas a metodo externos de controller
                 env = request.env(user=user.id)
@@ -20,11 +24,13 @@ class MiTiendaSaleOrderController(http.Controller):
                 obj_venta = env['sale.order'].search([('mitienda_id', '=', body['id'])])
                 if not obj_venta:
                     sincronizacion = SyncAPIMiTienda(env)
-                    print("sincronizacion:", sincronizacion)
                     # buscar cliente
                     obj_cliente = sincronizacion.buscar_cliente(id=body['customer'].get('id'), email=body['billing_info']['email'], doc_number=body['billing_info']['doc_number'])
-                    obj_bitacora_cliente = env['mitienda.pe.partner'].search(['|', ('mitienda_doc_number', '=', body['billing_info']['doc_number']),
-                                                                                ('mitienda_email', '=', body['billing_info']['email'])], limit=1, order="id desc")
+                    obj_bitacora_cliente = env['mitienda.pe.partner'].search([
+                        '|',
+                        ('mitienda_doc_number', '=', body['billing_info']['doc_number']),
+                        ('mitienda_email', '=', body['billing_info']['email']),
+                    ], limit=1, order="id desc")
                     if not obj_cliente:
                         # registra nuevo cliente
                         obj_cliente = env['res.partner'].create({
@@ -42,7 +48,7 @@ class MiTiendaSaleOrderController(http.Controller):
                     productos = []
                     for item in body['items']:
                         obj_producto = sincronizacion.buscar_producto(id=item['id'], sku=item['sku'])
-                        if not obj_producto:
+                        if not obj_producto or item['quantity'] <= 0 or item['unit_price'] < 0:
                             skus_inexistentes.append(item['sku'])
                         else:
                             productos.append({
@@ -70,7 +76,7 @@ class MiTiendaSaleOrderController(http.Controller):
                             # Registrar bitacora de ventas
                             sincronizacion.registrar_bitacora_venta(
                                 fecha_venta = body['date_created'],
-                                mensaje = f"Sincronizada venta: {body['code']}",
+                                mensaje = f"Sincronización de venta mediante webhook: {body['code']}",
                                 sale_order_id = obj_venta.id,
                                 partner_id = obj_venta.partner_id.id,
                                 mitienda_order_code = body['code'],
@@ -79,9 +85,17 @@ class MiTiendaSaleOrderController(http.Controller):
                                 mitienda_partner_id=obj_bitacora_cliente.id,
                             )
             return request.make_json_response(
-                {'success': True, 'message':'Sincronizado exitosamente'}, status=200
+                {
+                    'success': True,
+                    'message':'Venta sincronizada'
+                },
+                status=200,
             )
         except Exception as e:
             return request.make_json_response(
-                {'success': False, 'message': str(e)}, status=500
+                {
+                    'success': False,
+                    'message': str(e)
+                },
+                status=500,
             )
