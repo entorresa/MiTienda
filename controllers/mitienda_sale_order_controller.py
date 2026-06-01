@@ -10,7 +10,7 @@ class MiTiendaSaleOrderController(http.Controller):
     def webhook_sale_order(self, **kwargs):
         try:
             body = json.loads(request.httprequest.data.decode('utf-8'))
-            if body['object'] != 'order' and body['status'] != 1:
+            if body['object'] != 'order' or body['status'] != 1:
                 raise Exception('El estado de la venta debe ser igual a 1')
             obj_company = request.env["res.company"].sudo().search([])
             user = request.env.ref('base.user_root') # super usuario
