@@ -6,6 +6,13 @@
         web_icon="api_mitienda_peru,static/description/icon.png"
         active="True" />
 
+
+    <menuitem id="menu_root_tablero"
+        name="Tablero"
+        parent="api_mitienda_peru.menu_root"
+        sequence="5"
+        action="api_mitienda_peru.action_tablero_principal" />
+
     <menuitem id="menu_root_bitacora"
         name="Bitácora"
         parent="api_mitienda_peru.menu_root"

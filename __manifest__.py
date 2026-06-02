@@ -11,6 +11,9 @@
     'version': '2.0.0',
     'depends': ['base', 'sale_management'],
     'data': [
+        # ----------tablero---------
+        'views/tablero.xml',
+        # --------------------------
         'security/ir.model.access.csv',
         'views/mitienda_pe_conexion.xml',
         'views/mitienda_pe_partner.xml',

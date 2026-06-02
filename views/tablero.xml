@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+        <record id="view_tablero_search" model="ir.ui.view">
+            <field name="name">tablero.search</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="mis_favoritos"
+                        string="Favoritos"
+                        domain="[]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_tablero_principal" model="ir.actions.act_window">
+            <field name="name">Tablero</field>
+            <field name="res_model">res.users</field>
+            <field name="view_mode">kanban</field>
+            <field name="search_view_id" ref="view_tablero_search"/>
+            <field name="context">{"search_default_mis_favoritos": 1}</field>
+        </record>
+</odoo>
