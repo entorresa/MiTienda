@@ -12,28 +12,50 @@ class MiTiendaSaleOrderController(http.Controller):
             body = json.loads(request.httprequest.data.decode('utf-8'))
             if body['object'] != 'order' or body['status'] != 1:
                 raise Exception('El estado de la venta debe ser igual a 1')
-            obj_company = request.env["res.company"].sudo().search([])
+            conexion_ids = request.env["mitienda.pe.conexion"].sudo().search([('activo', '=', True)])
             user = request.env.ref('base.user_root') # super usuario
-            if len(obj_company) == 1 and user and 'id' in body and 'code' in body and 'billing_info' in body and 'customer' in body and 'items' in body:
-                if len(body['items']) == 0:
-                    raise Exception('Solo se pueden registrar ventas con uno mas items')
+            if not user or not conexion_ids:
+                return request.make_json_response(
+                    {
+                        'success': False,
+                        'message': 'No se encontró una configuración activa'
+                    },
+                    status=404,
+                )
+            if not ('id' in body and 'code' in body and 'billing_info' in body and 'customer' in body and 'items' in body):
+                return request.make_json_response(
+                    {
+                        'success': False,
+                        'message': 'Estructura de datos inválida'
+                    },
+                    status=422,
+                )
+            if len(body['items']) == 0:
+                return request.make_json_response(
+                    {
+                        'success': False,
+                        'message': 'Solo se pueden registrar ventas con uno mas items'
+                    },
+                    status=422,
+                )
+            for conexion_id in conexion_ids:
                 # establecer usuario a ENV, para facilitar consultas sin autenticacion y para no usar sudo()
                 # usar env para consultas y llamadas a metodo externos de controller
                 env = request.env(user=user.id)
-                #---------------------------------------------------------------------
-                obj_venta = env['sale.order'].search([('mitienda_id', '=', body['id'])])
+                env.company = conexion_id.company_id
+                obj_venta = env['sale.order'].with_user(user).with_company(conexion_id.company_id).search([('mitienda_id', '=', body['id'])])
                 if not obj_venta:
                     sincronizacion = SyncAPIMiTienda(env)
                     # buscar cliente
                     obj_cliente = sincronizacion.buscar_cliente(id=body['customer'].get('id'), email=body['billing_info']['email'], doc_number=body['billing_info']['doc_number'])
-                    obj_bitacora_cliente = env['mitienda.pe.partner'].search([
+                    obj_bitacora_cliente = env['mitienda.pe.partner'].with_user(user).with_company(conexion_id.company_id).search([
                         '|',
                         ('mitienda_doc_number', '=', body['billing_info']['doc_number']),
                         ('mitienda_email', '=', body['billing_info']['email']),
                     ], limit=1, order="id desc")
                     if not obj_cliente:
                         # registra nuevo cliente
-                        obj_cliente = env['res.partner'].create({
+                        obj_cliente = env['res.partner'].with_user(user).with_company(conexion_id.company_id).create({
                             'name': f"{body['billing_info']['name']} {body['billing_info']['last_name']}",
                             'email': body['billing_info']['email'],
                             'vat': body['billing_info']['doc_number'],
