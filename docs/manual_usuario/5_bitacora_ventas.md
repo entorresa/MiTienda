@@ -3,15 +3,15 @@
 ---
 
 ### Procedimiento
--   [1. Listado bitácora de sincronización de ventas.](#1-listado-bitacora-de-sincronizacion-de-ventas)
--   [2. Bitacorá de una venta sincronizada con éxito](#2-bitacora-de-una-venta-sincronizada-con-exito)
--   [3. Bitácora de una venta que no se sincronizó por algún error](#3-bitacora-de-una-venta-que-no-se-sincronizo-por-algun-error)
+-   [5.1. Listado bitácora de sincronización de ventas.](#51-listado-bitacora-de-sincronizacion-de-ventas)
+-   [5.2. Bitacorá de una venta sincronizada con éxito](#52-bitacora-de-una-venta-sincronizada-con-exito)
+-   [5.3. Bitácora de una venta que no se sincronizó por algún error](#53-bitacora-de-una-venta-que-no-se-sincronizo-por-algun-error)
 
 -   Para ver la bitácora de ventas ingrese al menú de `MiTienda.pe -> Bitácora -> Ventas`.
 
 ![](/docs/assets/bitacora_ventas/1_bitacora_ventas.png)
 
-### 1. Listado bitácora de sincronización de ventas.
+### 5.1. Listado bitácora de sincronización de ventas.
 
 -   El listado muestra todos las ventas que se lograrón sincronizar con éxito marcadas con color verde y también se muestran las ventas que no fueron sincronizadas por algún error, se marcan con color naranja. Los errores de conexión con la API se marcan con color rojo.
 
@@ -19,10 +19,10 @@
 
 ![listado de bitacora](/docs/assets/bitacora_ventas/2_listado_bitacora_ventas.png)
 
-### 2. Bitácora de una venta sincronizada con éxito
+### 5.2. Bitácora de una venta sincronizada con éxito
 
 ![exito](/docs/assets/bitacora_ventas/3_bitacora_ventas.png)
 
-### 3. Bitácora de una venta que no se sincronizó por algún error
+### 5.3. Bitácora de una venta que no se sincronizó por algún error
 
 ![error](/docs/assets/bitacora_ventas/4_bitacora_ventas.png)
