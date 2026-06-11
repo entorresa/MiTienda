@@ -11,10 +11,10 @@
     'version': '2.0.0',
     'depends': ['base', 'sale_management'],
     'data': [
+        'security/ir.model.access.csv',
         # ----------tablero---------
         'views/tablero.xml',
         # --------------------------
-        'security/ir.model.access.csv',
         'views/mitienda_pe_conexion.xml',
         'views/mitienda_pe_partner.xml',
         'views/mitienda_pe_sale_order.xml',
@@ -24,10 +24,17 @@
         # 'views/res_partner.xml',
         'views/product_template.xml',
         'wizards/wizard_mitienda_pe_ventas.xml',
-        'views/menu.xml',
         # ----------accion planificada---------
         'accion_planificada/sincronizar.xml',
+        'views/menu.xml',
         ],
+    'assets': {
+        'web.assets_backend': [
+            'api_mitienda_peru/static/src/scss/tablero.scss',
+            'api_mitienda_peru/static/src/js/tablero.js',
+            'api_mitienda_peru/static/src/xml/tablero_template.xml',
+        ],
+    },
     'demo': [],
     'license': 'GPL-3',
     'installable': True,

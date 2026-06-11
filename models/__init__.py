@@ -7,3 +7,4 @@ from . import product_product
 from . import res_partner
 from . import mitienda_pe_product
 from . import stock_picking
+from . import tablero
