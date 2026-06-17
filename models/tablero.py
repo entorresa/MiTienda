@@ -2,7 +2,7 @@ from odoo import models, fields, api
 from datetime import datetime, timedelta
 
 class Tablero(models.Model):
-    _name = 'api_mitienda_peru.tablero'
+    _name = 'mitienda.pe.tablero'
     _description = 'Tablero'
 
     user_id = fields.Many2one('res.users', string='Usuario')

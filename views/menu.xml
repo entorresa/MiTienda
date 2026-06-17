@@ -11,7 +11,7 @@
         name="Tablero"
         parent="api_mitienda_peru.menu_root"
         sequence="5"
-        action="api_mitienda_peru.action_tablero_principal" />
+        action="api_mitienda_peru.action_mitienda_pe_tablero_view" />
 
     <menuitem id="menu_root_bitacora"
         name="Bitácora"

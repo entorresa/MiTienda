@@ -31,17 +31,17 @@ class TarjetaSincronizacion extends Component {
 
     async cargarDatos() {
         const syncData = await this.orm.call(
-            'api_mitienda_peru.tablero',
+            'mitienda.pe.tablero',
             'get_sync_data',
             []
         );
         const sincs = await this.orm.call(
-            'api_mitienda_peru.tablero',
+            'mitienda.pe.tablero',
             'get_ultimas_sincronizaciones',
             []
         );
         const prefs = await this.orm.call(
-            'api_mitienda_peru.tablero',
+            'mitienda.pe.tablero',
             'get_preferencias',
             []
         );
@@ -92,7 +92,7 @@ class TarjetaSincronizacion extends Component {
                 text: "Tablero de Sincronización",
             },
             favorite:{
-                model: "api_mitienda_peru.tablero",
+                model: "mitienda.pe.tablero",
                 label: "Vista actual",
                 domain: [],
                 context: { search_default_mis_favoritos: this.state.isFavorite },
@@ -125,7 +125,7 @@ class TarjetaSincronizacion extends Component {
     async toggleFavorite(){
         this.state.isFavorite = !this.state.isFavorite;
         await this.orm.call(
-            'api_mitienda_peru.tablero',
+            'mitienda.pe.tablero',
             'set_favorite',
             [this.state.isFavorite]
         );
@@ -136,7 +136,7 @@ class TarjetaSincronizacion extends Component {
         this.state.color = color;
         this.state.menuAbierto = false;
         await this.orm.call(
-            'api_mitienda_peru.tablero',
+            'mitienda.pe.tablero',
             'set_color',
             [color]
         );
@@ -159,7 +159,7 @@ class TarjetaSincronizacion extends Component {
     }
 }
 registry.category("actions").add(
-    "api_mitienda_peru.tablero_sincronizacion",
+    "mitienda_pe_tablero_view",
     TarjetaSincronizacion
 );
 

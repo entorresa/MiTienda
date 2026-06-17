@@ -4,4 +4,4 @@ access_api_mitienda_partner,access_api_mitienda_partner,model_mitienda_pe_partne
 access_api_mitienda_sale_order,access_api_mitienda_sale_order,model_mitienda_pe_sale_order,base.group_user,1,1,1,1
 access_wizard_mitienda_pe_ventas,access_wizard_mitienda_pe_ventas,model_wizard_mitienda_pe_ventas,base.group_user,1,1,1,1
 access_mitienda_pe_product,access_mitienda_pe_product,model_mitienda_pe_product,base.group_user,1,1,1,1
-access_tablero,access_tablero,model_api_mitienda_peru_tablero,base.group_user,1,1,1,1
+access_mitienda_pe_tablero,access_mitienda_pe_tablero,model_mitienda_pe_tablero,base.group_user,1,1,1,1

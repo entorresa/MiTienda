@@ -10,14 +10,14 @@
                             <span class="fs-4 fw-bold">Sincronización de Ventas</span>
                         </div>
                         <div class="o_kanban_manage_button_section">
-                            <a class="o_kanban_manage_toggle_button" t-on-click="toggleMenu">
+                            <a class="o_kanban_manage_toggle_button px-2" t-on-click="toggleMenu">
                                 <i class="fa fa-ellipsis-v"/>
                             </a>
                         </div>
                     </div>
                     <div t-if="state.menuAbierto" class="o_kanban_card_manage_section">
                         <div class="container">
-                            <div class="row o_kanban_card_manage_settings">
+                            <!-- <div class="row o_kanban_card_manage_settings">
                                 <div class="col-6">
                                     <a t-on-click="toggleFavorite" style="cursor:pointer;">
                                         <i t-att-class="state.isFavorite ? 'fa fa-star o_dashboard_star' : 'fa fa-star-o o_dashboard_star'"/>
@@ -29,7 +29,7 @@
                                         Ver listado
                                     </a>
                                 </div>                            
-                            </div>
+                            </div> -->
                             <div class="row o_kanban_card_manage_settings mt-2">
                                 <div class="col-12">
                                     <ul class="o_colorlist d-flex flex-wrap gap-1 list-unstyled mb-0">
