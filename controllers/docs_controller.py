@@ -125,7 +125,6 @@ class DocsController(http.Controller):
                 base_url=ruta_modulo,
             ).write_pdf()
         except Exception as e:
-            print(str(e))
             pdf = str(e)
         return pdf
 

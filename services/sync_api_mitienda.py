@@ -50,9 +50,9 @@ class SyncAPIMiTienda:
             if len(ventas_api_codes) > 0 and len(ventas_api_codes) <= 90:
                 for venta_code in ventas_api_codes:
                     respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
-                    if respuesta['success'] is True:
+                    if respuesta['success'] is True and 'id' in respuesta['data'] and 'code' in respuesta['data'] and 'billing_info' in respuesta['data'] and 'customer' in respuesta['data'] and 'items' in respuesta['data']:
                         # Solo ventas con estado Aprobado (1)
-                        if respuesta['data']['status'] == 1:
+                        if respuesta['data']['status'] == 1 and len(respuesta['data']['items']) > 0:
                             contador_total += 1
                             # verificar si existe cliente
                             obj_bitacora_cliente = self.env['mitienda.pe.partner'].search([
@@ -78,14 +78,14 @@ class SyncAPIMiTienda:
                                             'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
                                         })
                                         # registra en bitacora de clientes
-                                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta, obj_cliente)
+                                        obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta['data']['billing_info'], obj_cliente)
 
                             # Buscar productos de Odoo por SKU
                             skus_inexistentes = []
                             productos = []
                             for item in respuesta['data']['items']:
                                 obj_producto = self.buscar_producto(id=item['id'], sku=item['sku'])
-                                if not obj_producto:
+                                if not obj_producto or item['quantity'] <= 0 or item['unit_price'] < 0:
                                     skus_inexistentes.append(item['sku'])
                                 else:
                                     productos.append({
@@ -114,7 +114,7 @@ class SyncAPIMiTienda:
                                     # Registrar bitacora de ventas
                                     self.registrar_bitacora_venta(
                                         fecha_venta=respuesta['data']['date_created'],
-                                        mensaje=f"Sincronizada venta: {respuesta['data']['code']}",
+                                        mensaje=f"Venta sincronizada: {respuesta['data']['code']}",
                                         sale_order_id=obj_venta.id,
                                         partner_id=obj_venta.partner_id.id,
                                         mitienda_order_code=respuesta['data']['code'],
@@ -227,10 +227,10 @@ class SyncAPIMiTienda:
             'fecha_sincronizacion': fields.Datetime.now(),
             'company_id': self.env.company.id,
             'partner_id': obj_cliente.id,
-            'mitienda_name': respuesta['data']['billing_info']['name'],
-            'mitienda_last_name': respuesta['data']['billing_info']['last_name'],
-            'mitienda_email': respuesta['data']['billing_info']['email'],
-            'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
+            'mitienda_name': respuesta['name'],
+            'mitienda_last_name': respuesta['last_name'],
+            'mitienda_email': respuesta['email'],
+            'mitienda_doc_number': respuesta['doc_number'],
         })
         return obj_bitacora_cliente
 
