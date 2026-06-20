@@ -11,9 +11,18 @@
             </search>
         </field>
     </record>
-    <record id="action_mitienda_pe_tablero_view" model="ir.actions.client">
-        <field name="name">Tablero</field>
-        <field name="tag">mitienda_pe_tablero_view</field>
-        <field name="context">{"search_default_mis_favoritos": 1} </field>
+    <record id="action_mitienda_pe_tablero_view" model="ir.actions.act_window">
+        <field name="name">Tablero (mitienda_PE)</field>
+        <field name="res_model">mitienda.pe.tablero</field>
+        <field name="view_mode">kanban</field>
+        <field name="search_view_id" ref="mitienda_pe_tablero_search"/>
+        <field name="context">{"search_default_mis_favoritos": 1}</field>
+    </record>
+
+     <record id="action_mitienda_pe_tablero_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_tablero_kanban"/>
+        <field name="act_window_id" ref="action_mitienda_pe_tablero_view"/>
     </record>
 </odoo>

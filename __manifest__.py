@@ -13,6 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         # ----------tablero---------
+        'static/src/xml/tablero_template.xml',
         'views/tablero.xml',
         # --------------------------
         'views/mitienda_pe_conexion.xml',
@@ -30,9 +31,9 @@
         ],
     'assets': {
         'web.assets_backend': [
-            'api_mitienda_peru/static/src/scss/tablero.scss',
             'api_mitienda_peru/static/src/js/tablero.js',
-            'api_mitienda_peru/static/src/xml/tablero_template.xml',
+            'api_mitienda_peru/static/src/scss/tablero.scss',
+            # 'api_mitienda_peru/static/src/xml/tablero_template.xml',
         ],
     },
     'demo': [],
