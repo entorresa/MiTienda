@@ -16,7 +16,7 @@
                         <div t-attf-class="o_kanban_record o_tablero_dashboard o_color_#{record.color.raw_value}">
                             <div class="o_kanban_card_header d-flex justify-content-between align-items-center">
                                 <div class="o_kanban_card_header_title">
-                                    <span class="fs-4 fw-bold">Sincronización de Ventas</span>
+                                    <span class="title-tablero fs-4 fw-bold">Sincronización de Ventas</span>
                                 </div>
                                 <div class="o_kanban_manage_button_section">
                                     <a class="dropdown-toggle o-no-caret btn" data-bs-toggle="dropdown" href="#" role="button">
@@ -39,7 +39,6 @@
                                         </button>
                                     </div>
                                 </div>
-                                <!-- <div>DEBUG sincronizaciones_count: <t t-esc="record.sincronizaciones_count.raw_value"/></div> -->
                                 <div class="col-auto" t-if="record.sincronizaciones_count.raw_value > 0">
                                     <field name="ultimas_sincronizaciones_html" widget="html"/>
                                 </div>

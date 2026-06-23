@@ -1,27 +1,33 @@
+.o_kanban_record{
+    padding: 10px;
+}
 .o_kanban_renderer .o_kanban_record.o_tablero_dashboard{
     border: 1px solid rgba(0,0,0,0.15) !important;
     border-radius: 8px;
     border-left-width: 5px !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.12), 01px 2px rgba(0,0,0,0.08);
     background: #fff;
-    padding: 25px 16px 20px 20px !important;
+    padding: 16px 16px 20px 20px !important;
     display: inline-block;
     min-width: 515px;
     max-width: 800px;
     border-left: 4px solid transparent;
-
-    &.o_color_0 { border-left-color: #ffffff;}
-    &.o_color_1 { border-left-color: #e44e4e;}
-    &.o_color_2 { border-left-color: #e4a04e;}
-    &.o_color_3 { border-left-color: #e4d74e;}
-    &.o_color_4 { border-left-color: #4e8ee4;}
-    &.o_color_5 { border-left-color: #714b67;}
-    &.o_color_6 { border-left-color: #e4934e;}
-    &.o_color_7 { border-left-color: #4eb8e4;}
-    &.o_color_8 { border-left-color: #1a4e8e;}
-    &.o_color_9 { border-left-color: #e44eb0;}
-    &.o_color_10 { border-left-color: #4ee44e;}
-    &.o_color_11 { border-left-color: #9b4ee4;}
+    &.o_color_0 { border-left-color: #ffffff !important;}
+    &.o_color_1 { border-left-color: #e44e4e !important;}
+    &.o_color_2 { border-left-color: #e4a04e !important;}
+    &.o_color_3 { border-left-color: #e4d74e !important;}
+    &.o_color_4 { border-left-color: #4e8ee4 !important;}
+    &.o_color_5 { border-left-color: #714b67 !important;}
+    &.o_color_6 { border-left-color: #e4934e !important;}
+    &.o_color_7 { border-left-color: #4eb8e4 !important;}
+    &.o_color_8 { border-left-color: #1a4e8e !important;}
+    &.o_color_9 { border-left-color: #e44eb0 !important;}
+    &.o_color_10 { border-left-color: #4ee44e !important;}
+    &.o_color_11 { border-left-color: #9b4ee4 !important;}
+    .title-tablero{
+        color: #017e84;
+        font-weight: bold !important;
+    }
     
     .o_siat_favorite_toggle {
         cursor: pointer;
@@ -36,7 +42,6 @@
             color:gold;
         }
     }
-
     .o_kanban_manage_button_section{
         position: absolute;
         top: 8px;
@@ -57,9 +62,10 @@
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
-        padding: 8px;
+        padding: 4px;
         list-style: none;
         margin: 0;
+        overflow: hidden;
         li {
             width: 20px;
             height: 20px;
@@ -107,12 +113,9 @@
     .o_mitienda_ultimas_title,
     .o_mitienda_ultimas_title ~ div{
         margin-left: auto;
-        width: 215px;
+        width: 180px;
     }
     
-
-
-
     .o_siat_pv_name{
         color: #017e84;
         cursor: pointer;
@@ -130,60 +133,6 @@
             border-color: #5a3a52;
         }
     }    
-    // .o_kanban_record {
-    //     min-height: 150px;
-    //     position: relative;        
-    //         .o_dashboard_star {
-    //         font-size: 12px;
-    //         &.fa-star-o {
-    //             color: #aaa;
-    //             &:hover {
-    //                 color: gold;
-    //             }
-    //         }
-    //         &.fa-star {
-    //             color: gold;
-    //         }
-    //     }
-    //     .o_kanban_card_manage_section {
-    //         position: absolute;
-    //         right: 16px;
-    //         top: 48px;
-    //         background:#fff;
-    //         border: 1px solid #ddd;
-    //         border-radius: 6px;
-    //         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    //         padding: 12px;
-    //         z-index: 100;
-    //         min-width: 200px;
-    //         .o_kanban_card_manage_settings {
-    //             padding: 6px 0;
-    //             border-bottom: 1px solid #f0f0f0;
-    //             &:last-child {border-bottom: none;}
-                
-    //             a {
-    //                 color: #333;
-    //                 cursor: pointer;
-    //                 &:hover {
-    //                     color: #017e84;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     a{
-    //         color: #017e84;
-    //         cursor: pointer;
-    //         &:hover {text-decoration: underline;} 
-    //     }
-    // }
+    
 } 
-@media (max-width: 991px){
-    .o_kanban_record{width: 100vw;}
-}
-@media (min-width: 992px){
-    .o_kanban_record{width: 47vw;}
-}
-@media (min-width: 1400px){
-    .o_kanban_record:nth-child(n+12){width: 31vw;}
-}
  
