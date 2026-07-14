@@ -4,7 +4,7 @@
         <field name="name">tablero.kanban</field>  
         <field name="model">mitienda.pe.tablero</field>
         <field name="arch" type="xml">
-            <kanban>
+            <kanban create="true" edit="true" group_create="false" group_edit="false" quick_create="false" records_draggable="false" class="api_mitinda_vista_tablero">
                 <field name="name"/>
                 <field name="sincronizaciones_count"/>
                 <field name="ultimas_sincronizaciones_html"/>
