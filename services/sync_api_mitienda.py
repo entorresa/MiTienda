@@ -79,6 +79,15 @@ class SyncAPIMiTienda:
                                         })
                                         # registra en bitacora de clientes
                                         obj_bitacora_cliente = self.registrar_bitacora_cliente(respuesta['data']['billing_info'], obj_cliente)
+                                    else:
+                                        if not obj_cliente.email or not obj_cliente.vat or not obj_cliente.mitienda_id or not obj_cliente.mitienda_email or not obj_cliente.mitienda_doc_number:
+                                            obj_cliente.write({
+                                                'email': respuesta['data']['billing_info']['email'],
+                                                'vat': respuesta['data']['billing_info']['doc_number'],
+                                                'mitienda_id': respuesta['data']['customer'].get('id'),
+                                                'mitienda_email': respuesta['data']['billing_info']['email'],
+                                                'mitienda_doc_number': respuesta['data']['billing_info']['doc_number'],
+                                            })
 
                             # Buscar productos de Odoo por SKU
                             skus_inexistentes = []
@@ -123,6 +132,18 @@ class SyncAPIMiTienda:
                                         mitienda_partner_id=obj_bitacora_cliente.id,
                                     )
                                     contador_exito += 1
+                                else:
+                                    self.registrar_bitacora_venta(
+                                        fecha_venta=respuesta['data']['date_created'],
+                                        mensaje=f"No se pudo sincronizar la venta debido a error de base de datos",
+                                        partner_id=obj_cliente.id,
+                                        error=True,
+                                        mitienda_order_code=respuesta['data']['code'],
+                                        mitienda_order_id=respuesta['data']['id'],
+                                        status=respuesta['data']['status'],
+                                        mitienda_partner_id=obj_bitacora_cliente.id,
+                                    )
+                                    contador_error += 1
                     else:
                         self.registrar_bitacora_venta(mensaje=respuesta['error']['message'], error=True)
                         contador_error += 1
@@ -199,25 +220,40 @@ class SyncAPIMiTienda:
         domain = operador+domain
         obj_venta = self.env['sale.order'].search(domain, limit=1, order='id asc')
         if not obj_venta:
-            # cotizacion
-            obj_venta = self.env['sale.order'].create({
-                'partner_id': cliente_id,
-                'mitienda_id': id,
-                'mitienda_code': code,
-                'mitienda_sunat_pdf': False,
-                'order_line': [Command.create(linea) for linea in productos]
-            })
+            try:
+                # cotizacion
+                obj_venta = self.env['sale.order'].create({
+                    'partner_id': cliente_id,
+                    'mitienda_id': id,
+                    'mitienda_code': code,
+                    'mitienda_sunat_pdf': False,
+                    'order_line': [Command.create(linea) for linea in productos]
+                })
+            except Exception as e:
+                _logger.error(str(e))
+                _logger.error('Error al registrar la venta: ' + code)
+        if obj_venta:
             if self.conexion_id.sync_venta_logica == 'venta':
                 # venta confirmado
                 obj_venta.action_confirm()
-            elif self.conexion_id.sync_venta_logica == 'factura_borrador':
+            elif self.conexion_id.sync_venta_logica == 'factura_borrador' or self.conexion_id.sync_venta_logica == 'factura_publicada':
                 # venta confirmado y crea la factura en borrador
-                obj_venta.action_confirm()
-                obj_venta._create_invoices()
-            elif self.conexion_id.sync_venta_logica == 'factura_publicada':
-                obj_venta.action_confirm()
-                factura = obj_venta._create_invoices()
-                factura.action_post()
+                try:
+                    obj_venta.action_confirm()
+                except Exception as e:
+                    _logger.error(str(e))
+                    _logger.error('Error al confirmar venta: ' + obj_venta.name)
+                try:
+                    factura = obj_venta._create_invoices()
+                except Exception as e:
+                    _logger.error(str(e))
+                    _logger.error('Error al registrar factura asociada a la venta: ' + obj_venta.name)
+                if self.conexion_id.sync_venta_logica == 'factura_publicada' and factura:
+                    try:
+                        factura.action_post()
+                    except Exception as e:
+                        _logger.error(str(e))
+                        _logger.error('Error al publicar factura asociada a la venta: ' + factura.name)
             # por else no hace nada, la venta se queda como cotizacion
         return obj_venta
 
