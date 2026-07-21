@@ -1,190 +1,194 @@
-.o_kanban_renderer .o_kanban_record.o_tablero_dashboard{
-    border: 1px solid rgba(0,0,0,0.15) !important;
-    border-radius: 8px;
-    border-left-width: 5px !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.12), 01px 2px rgba(0,0,0,0.08);
-    background: #fff;
-    padding: 16px 16px 20px 20px !important;
-    display: inline-block;
-    min-width: 515px;
-    max-width: 800px;
-    border-left: 4px solid transparent;
-
-    margin: 1px;
-    // overflow-x: auto;
-    // overflow-y: auto;
-    max-height: 400px;
-    // min-width: 0;
-    &.o_color_0 { border-left-color: #ffffff !important;}
-    &.o_color_1 { border-left-color: #e44e4e !important;}
-    &.o_color_2 { border-left-color: #e4a04e !important;}
-    &.o_color_3 { border-left-color: #e4d74e !important;}
-    &.o_color_4 { border-left-color: #4e8ee4 !important;}
-    &.o_color_5 { border-left-color: #714b67 !important;}
-    &.o_color_6 { border-left-color: #e4934e !important;}
-    &.o_color_7 { border-left-color: #4eb8e4 !important;}
-    &.o_color_8 { border-left-color: #1a4e8e !important;}
-    &.o_color_9 { border-left-color: #e44eb0 !important;}
-    &.o_color_10 { border-left-color: #4ee44e !important;}
-    &.o_color_11 { border-left-color: #9b4ee4 !important;}
-    .title-tablero{
-        color: #017e84;
-        font-weight: bold !important;
-    }
+.api_mitinda_vista_tablero{
+    .o_kanban_renderer .o_kanban_record.o_tablero_dashboard{
+        border: 1px solid rgba(0,0,0,0.15) !important;
+        border-radius: 8px;
+        border-left-width: 5px !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.12), 01px 2px rgba(0,0,0,0.08);
+        background: #fff;
+        padding: 16px 16px 20px 20px !important;
+        display: inline-block;
+        min-width: 515px;
+        max-width: 800px;
+        border-left: 4px solid transparent;
     
-    .o_siat_favorite_toggle {
-        cursor: pointer;
-        margin-right: 4px;
-        .fa-star-o{
-            color: #aaa;
-            &:hover{
+        margin: 1px;
+        // overflow-x: auto;
+        // overflow-y: auto;
+        max-height: 400px;
+        // min-width: 0;
+        &.o_color_0 { border-left-color: #ffffff !important;}
+        &.o_color_1 { border-left-color: #e44e4e !important;}
+        &.o_color_2 { border-left-color: #e4a04e !important;}
+        &.o_color_3 { border-left-color: #e4d74e !important;}
+        &.o_color_4 { border-left-color: #4e8ee4 !important;}
+        &.o_color_5 { border-left-color: #714b67 !important;}
+        &.o_color_6 { border-left-color: #e4934e !important;}
+        &.o_color_7 { border-left-color: #4eb8e4 !important;}
+        &.o_color_8 { border-left-color: #1a4e8e !important;}
+        &.o_color_9 { border-left-color: #e44eb0 !important;}
+        &.o_color_10 { border-left-color: #4ee44e !important;}
+        &.o_color_11 { border-left-color: #9b4ee4 !important;}
+        .title-tablero{
+            color: #017e84;
+            font-weight: bold !important;
+        }
+        
+        .o_siat_favorite_toggle {
+            cursor: pointer;
+            margin-right: 4px;
+            .fa-star-o{
+                color: #aaa;
+                &:hover{
+                    color:gold;
+                }
+            }
+            .fa-star{
                 color:gold;
             }
         }
-        .fa-star{
-            color:gold;
-        }
-    }
-    .o_kanban_manage_button_section{
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        .dropdown-toggle.show{
-            display: block !important;
-            color: #888;
-            &:hover{
-                color: #333;
+        .o_kanban_manage_button_section{
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            .dropdown-toggle.show{
+                display: block !important;
+                color: #888;
+                &:hover{
+                    color: #333;
+                }
             }
         }
-    }
-    
-    .oe_kanban_colorpicker{
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        padding: 4px;
-        list-style: none;
-        margin: 0;
-        width: 180px;
-        li {
+        
+        .oe_kanban_colorpicker{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 4px;
+            list-style: none;
             margin: 0;
-            padding: 0;
-            list-style: none; 
-        }
-        a{
-            display: block;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            border: none;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            &:hover{
-                transform: scale(1.15);
-                box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
-                cursor: pointer;
+            width: 180px;
+            li {
+                margin: 0;
+                padding: 0;
+                list-style: none; 
+            }
+            a{
+                display: block;
+                width: 100%;
+                height: 100%;
+                box-sizing: border-box;
+                border: none;
+                transition: transform 0.1s ease, box-shadow 0.1s ease;
+                &:hover{
+                    transform: scale(1.15);
+                    box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
+                    cursor: pointer;
+                }
             }
         }
-    }
-    .o_dashboard_graph {
-        position: relative;
-        margin: 20px -16px -16px;
-        canvas {
-            height: 150px;
-            width: 100%;
-        } 
-    }
-    .container-fluid {
-        flex: 1 0 auto;
-        display: flex;
-        flex-flow: column nowrap;
-    }
-
-    .o_mitienda_ultimas_title{
-        text-align: right;
-        font-weight: 600;
-        font-size: 0.85em;
-        color: #555;
-        margin-bottom: 6px;
-        margin-top: 8px;
-    }
-
-    .o_mitienda_ultimas_title,
-    .o_mitienda_ultimas_title ~ div{
-        margin-left: auto;
-        width: 180px;
-    }
-    
-    .o_siat_pv_name{
-        color: #017e84;
-        cursor: pointer;
-        text-decoration: none;
-        &:hover{
-            text-decoration: underline;
+        .o_dashboard_graph {
+            position: relative;
+            margin: 20px -16px -16px;
+            canvas {
+                height: 150px;
+                width: 100%;
+            } 
         }
-    }
-    
-    .btn-primary{
-        background-color: #714B67;
-        border-color: #714B67;
-        &:hover{
-            background-color: #5a3a52;
-            border-color: #5a3a52;
+        .container-fluid {
+            flex: 1 0 auto;
+            display: flex;
+            flex-flow: column nowrap;
         }
-    }    
     
-} 
-@media (min-width:1650px){
-    .o_content .o_kanban_renderer.o_renderer{
-        display: grid !important;
-        grid-template-columns: repeat(3,1fr) !important;
-        gap: 0px;
-    }
-    .o_content .o_kanban_renderer.o_renderer > .o_kanban_record{
-        flex: unset;
-        width: 100%;
-        max-width: 100%;
-        min-width: unset;
-        padding-right: 10px;
-    }
-}
-
-@media (min-width:1101px)and(max-width:1649px){
-    .o_content .o_kanban_renderer.o_renderer{
-        display: grid !important;
-        grid-template-columns: repeat(2,1fr) !important;
-        gap: 0px;
-    }
-    .o_content .o_kanban_renderer.o_renderer > .o_kanban_record{
-        flex: unset;
-        width: 100%;
-        max-width: 100%;
-        min-width: unset;
-        padding-right: 10px;
-    }
-}
-
-@media (max-width: 1100px){
-    .o_kanban_renderer .o_kanban_record.o_tablero_dashboard{
-        max-width: none;
-        min-width: auto;
+        .o_mitienda_ultimas_title{
+            text-align: right;
+            font-weight: 600;
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 6px;
+            margin-top: 8px;
+        }
+    
+        .o_mitienda_ultimas_title,
+        .o_mitienda_ultimas_title ~ div{
+            margin-left: auto;
+            width: 180px;
+        }
+        
+        .o_siat_pv_name{
+            color: #017e84;
+            cursor: pointer;
+            text-decoration: none;
+            &:hover{
+                text-decoration: underline;
+            }
+        }
+        
+        .btn-primary{
+            background-color: #714B67;
+            border-color: #714B67;
+            &:hover{
+                background-color: #5a3a52;
+                border-color: #5a3a52;
+            }
+        }    
+        
     } 
-    .o_content .o_kanban_renderer.o_renderer > .o_kanban_record{
-        padding: 4px;
-        margin-bottom: 5px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .o_dashboard_graph {
-        position: relative;
-        margin: 20px -16px -16px;
-        overflow-x: auto;
-        canvas {
-            height: 150px;
+    @media (min-width:1650px){
+        .o_content .o_kanban_renderer.o_renderer{
+            display: grid !important;
+            grid-template-columns: repeat(3,1fr) !important;
+            gap: 0px;
+        }
+        .o_content .o_kanban_renderer.o_renderer > .o_kanban_record{
+            flex: unset;
             width: 100%;
-            min-width: 450px;
-        } 
+            max-width: 100%;
+            min-width: unset;
+            padding-right: 10px;
+        }
     }
+    
+    @media (min-width:1101px)and(max-width:1649px){
+        .o_content .o_kanban_renderer.o_renderer{
+            display: grid !important;
+            grid-template-columns: repeat(2,1fr) !important;
+            gap: 0px;
+        }
+        .o_content .o_kanban_renderer.o_renderer > .o_kanban_record{
+            flex: unset;
+            width: 100%;
+            max-width: 100%;
+            min-width: unset;
+            padding-right: 10px;
+        }
+    }
+    
+    @media (max-width: 1100px){
+        .o_kanban_renderer .o_kanban_record.o_tablero_dashboard{
+            max-width: none;
+            min-width: auto;
+        } 
+        .o_content .o_kanban_renderer.o_renderer > .o_kanban_record{
+            padding: 4px;
+            margin-bottom: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .o_dashboard_graph {
+            position: relative;
+            margin: 20px -16px -16px;
+            overflow-x: auto;
+            canvas {
+                height: 150px;
+                width: 100%;
+                min-width: 450px;
+            } 
+        }
+    } 
+
 } 
+
