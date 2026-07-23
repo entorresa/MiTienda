@@ -8,7 +8,11 @@
     'author': "DTE S.R.L.",
     'website': "https://www.dte.com.bo",
     'category': 'Sales/Sales',
+
     'version': '3.0.0',
+    'development_status': 'Beta',
+    'release': 'rc5',
+
     'depends': ['base', 'sale_management'],
     'data': [
         'security/ir.model.access.csv',
@@ -32,7 +36,7 @@
         ],
     'assets': {
         'web.assets_backend': [
-            'api_mitienda_peru/static/src/js/tablero.js',
+            'api_mitienda_peru/static/src/js/*.js',
             'api_mitienda_peru/static/src/scss/tablero.scss',
             # 'api_mitienda_peru/static/src/xml/tablero_template.xml',
         ],
