@@ -1,53 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <record id="view_tablero_kanban" model="ir.ui.view">
-        <field name="name">tablero.kanban</field>  
+        <field name="name">mitienda.tablero.kanban</field>
         <field name="model">mitienda.pe.tablero</field>
         <field name="arch" type="xml">
-            <kanban delete="false" create="false" edit="false" group_create="false" group_edit="false" quick_create="false" records_draggable="false" class="api_mitinda_vista_tablero">
+            <kanban
+                create="false"
+                delete="false"
+                quick_create="false"
+                group_create="false"
+                records_draggable="false"
+                class="o_kanban_dashboard mitienda_tablero"
+            >
                 <field name="name"/>
                 <field name="sincronizaciones_count"/>
                 <field name="ultimas_sincronizaciones_html"/>
                 <field name="grafico_data"/>
                 <field name="is_favorite"/>
                 <field name="color"/>
+
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="o_kanban_record o_tablero_dashboard o_color_#{record.color.raw_value}">
-                            <div class="o_kanban_card_header d-flex justify-content-between align-items-center">
+                        <div t-attf-class="o_kanban_record o_kanban_color_#{record.color.raw_value}">
+                            <div class="o_kanban_card_header d-flex justify-content-between align-items-start">
                                 <div class="o_kanban_card_header_title">
-                                    <span class="title-tablero fs-4 fw-bold">Sincronización de Ventas</span>
+                                    <h4 class="mb-0 fw-bold">
+                                        <field name="name" />
+                                    </h4>
                                 </div>
-                                <div class="o_kanban_manage_button_section">
-                                    <a class="dropdown-toggle o-no-caret btn" data-bs-toggle="dropdown" href="#" role="button">
+                                <div class="dropdown">
+                                    <a
+                                        class="btn btn-link p-0 text-body dropdown-toggle o-no-caret"
+                                        data-bs-toggle="dropdown"
+                                        href="#"
+                                        role="button"
+                                    >
                                         <i class="fa fa-ellipsis-v"/>
                                     </a>
-                                    <div class="dropdown-menu" role="menu">
+                                    <div class="dropdown-menu dropdown-menu-end">
                                         <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                        <a class="o_siat_favorite_toggle dropdown-item" type="object" name="action_toggle_favorite" href="#">
-                                            <i t-attf-class="fa #{record.is_favorite.raw_value ? 'fa-star' : 'fa-star-o'}"/>
-                                            <span class="ms-1" t-esc="record.is_favorite.raw_value ? 'Quitar de favoritos' : 'Marcar como favorito'"/>
+                                        <a class="dropdown-item" type="object" name="action_toggle_favorite" href="#">
+                                            <i t-att-class="record.is_favorite.raw_value ? 'fa fa-star' : 'fa fa-star-o'"/>
+                                            <span class="ms-2">
+                                                <t t-if="record.is_favorite.raw_value">Quitar de favoritos</t>
+                                                <t t-else="">Marcar como favorito</t>
+                                            </span>
                                         </a>
                                         <!-- <a role="menuitem" type="delete" class="dropdown-item">Remover</a> -->
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-3 p-0 container-fluid">
-                                <div class="row mb-2">
-                                    <div class="col mb-3 mb-sm-0">
-                                        <button type="object" name="action_ver_mas" class="btn btn-primary btn-sm">
+
+                            <div class="o_kanban_card_content d-flex flex-column gap-3">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <button type="object" name="action_ver_mas" class="btn btn-primary">
                                             Ver más
                                         </button>
                                     </div>
-                                </div>
-                                <div class="col-auto" t-if="record.sincronizaciones_count.raw_value > 0">
-                                    <field name="ultimas_sincronizaciones_html" widget="html"/>
-                                </div>
-                                <div class="row mt-auto">
-                                    <div class="o_dashboard_graph">
-                                        <canvas t-att-data-chart="record.grafico_data.raw_value" class="o_mitienda_sync_chart"/>
+                                    <div t-if="record.sincronizaciones_count.raw_value">
+                                        <field name="ultimas_sincronizaciones_html" widget="html"/>
                                     </div>
-                                </div>                          
+                                </div>
+                                <div class="o_dashboard_graph mt-auto">
+                                    <canvas t-att-data-chart="record.grafico_data.raw_value" class="o_mitienda_sync_chart"/>
+                                </div>
                             </div>
                         </div>
                     </t>
@@ -56,4 +73,3 @@
         </field>
     </record>
 </odoo>
-  
