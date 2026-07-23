@@ -4,7 +4,7 @@
         <field name="name">tablero.kanban</field>  
         <field name="model">mitienda.pe.tablero</field>
         <field name="arch" type="xml">
-            <kanban create="true" edit="true" group_create="false" group_edit="false" quick_create="false" records_draggable="false" class="api_mitinda_vista_tablero">
+            <kanban delete="false" create="false" edit="false" group_create="false" group_edit="false" quick_create="false" records_draggable="false" class="api_mitinda_vista_tablero">
                 <field name="name"/>
                 <field name="sincronizaciones_count"/>
                 <field name="ultimas_sincronizaciones_html"/>
@@ -26,8 +26,9 @@
                                         <ul class="oe_kanban_colorpicker" data-field="color"/>
                                         <a class="o_siat_favorite_toggle dropdown-item" type="object" name="action_toggle_favorite" href="#">
                                             <i t-attf-class="fa #{record.is_favorite.raw_value ? 'fa-star' : 'fa-star-o'}"/>
-                                            <span t-esc="record.is_favorite.raw_value ? 'Quitar de favoritos' : 'Marcar como favorito'"/>
+                                            <span class="ms-1" t-esc="record.is_favorite.raw_value ? 'Quitar de favoritos' : 'Marcar como favorito'"/>
                                         </a>
+                                        <!-- <a role="menuitem" type="delete" class="dropdown-item">Remover</a> -->
                                     </div>
                                 </div>
                             </div>

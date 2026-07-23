@@ -13,6 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         # ----------tablero---------
+        'data/seeders.xml',
         'static/src/xml/tablero_template.xml',
         'views/tablero.xml',
         # --------------------------

@@ -5,19 +5,14 @@ class Tablero(models.Model):
     _name = 'mitienda.pe.tablero'
     _description = 'Tablero'
 
-    user_id = fields.Many2one('res.users', string='Usuario')
-    name = fields.Char(string='Nombre tablero', size=128, default='Tablero')
-    is_favorite = fields.Boolean(string='Favorito', default=False)
+    user_id = fields.Many2one('res.users', string='Usuario', ondelete="cascade", default=lambda self: self.env.user)
+    name = fields.Char(string='Nombre tablero', size=128, default='Sincronizaciones de ventas')
+    is_favorite = fields.Boolean(string='Favorito', default=True)
     color = fields.Integer(string='Color', default=0)
     
     sincronizaciones_count = fields.Integer(string='Cantidad de sincronizaciones',compute='_compute_sincronizaciones_count')
     ultimas_sincronizaciones_html = fields.Html(string='Ultimas sincronizaciones',compute='_compute_ultimas_sincronizaciones_html',sanitize=False)
     grafico_data = fields.Char(string='Datos del grafico',compute='_compute_grafico_data')
-
-    # _sql_constraints = [
-    #     ('user_unique', 'unique(user_id)',
-    #     'Ya existe una preferencia para este usuario')
-    # ]
 
     def _get_ventas_domain(self):
         return [
@@ -104,3 +99,13 @@ class Tablero(models.Model):
             'view_mode':'list,form',
             'target':'current',
         }
+
+    @api.model
+    def _user_tablero_seeder(self):
+        users = self.env['res.users'].search([])
+        for user in users:
+            tablero = self.env['mitienda.pe.tablero'].sudo().search([('user_id', '=', user.id)])
+            if not tablero:
+                self.env['mitienda.pe.tablero'].create({
+                    'user_id': user.id,
+                })

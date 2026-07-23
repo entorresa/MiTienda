@@ -7,16 +7,17 @@
             <search>
                 <filter name="mis_favoritos"
                 string="Mis Favoritos"
-                domain="[('is_favorite','=',True)]"/>
+                domain="[('is_favorite','=',True),('user_id','=',uid)]"/>
             </search>
         </field>
     </record>
     <record id="action_mitienda_pe_tablero_view" model="ir.actions.act_window">
-        <field name="name">Tablero (mitienda_PE)</field>
+        <field name="name">Tablero</field>
         <field name="res_model">mitienda.pe.tablero</field>
         <field name="view_mode">kanban</field>
         <field name="search_view_id" ref="mitienda_pe_tablero_search"/>
         <field name="context">{"search_default_mis_favoritos": 1}</field>
+        <field name="domain">[('user_id','=',uid)]</field>
     </record>
 
      <record id="action_mitienda_pe_tablero_view_kanban" model="ir.actions.act_window.view">
