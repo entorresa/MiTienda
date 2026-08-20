@@ -10,8 +10,8 @@
     'category': 'Sales/Sales',
 
     'version': '3.0.0',
-    'development_status': 'Beta',
-    'release': 'rc5',
+    'development_status': 'Production/Stable',
+    'release': '',
 
     'depends': ['base', 'sale_management'],
     'data': [
