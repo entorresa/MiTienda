@@ -119,9 +119,6 @@ class SyncAPIMiTienda:
                                 contador_error += 1
                             else:
                                 pdf = respuesta.get('data', {}).get('billing_info', {}).get('e-billing', {}).get('url_pdf', None)
-                                print('\n\n\n********************************************')
-                                print(pdf)
-                                print('********************************************\n\n\n')
                                 obj_venta = self.buscar_venta(
                                     id=respuesta['data']['id'],
                                     code=respuesta['data']['code'],
