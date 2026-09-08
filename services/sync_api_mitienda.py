@@ -118,7 +118,17 @@ class SyncAPIMiTienda:
                                 )
                                 contador_error += 1
                             else:
-                                obj_venta = self.buscar_venta(id=respuesta['data']['id'], code=respuesta['data']['code'], cliente_id=obj_cliente.id, productos=productos)
+                                pdf = respuesta.get('data', {}).get('billing_info', {}).get('e-billing', {}).get('url_pdf', None)
+                                print('\n\n\n********************************************')
+                                print(pdf)
+                                print('********************************************\n\n\n')
+                                obj_venta = self.buscar_venta(
+                                    id=respuesta['data']['id'],
+                                    code=respuesta['data']['code'],
+                                    cliente_id=obj_cliente.id,
+                                    productos=productos,
+                                    pdf=pdf,
+                                )
                                 if obj_venta:
                                     # Registrar bitacora de ventas
                                     self.registrar_bitacora_venta(
@@ -130,6 +140,7 @@ class SyncAPIMiTienda:
                                         mitienda_order_id=respuesta['data']['id'],
                                         status=respuesta['data']['status'],
                                         mitienda_partner_id=obj_bitacora_cliente.id,
+                                        pdf=pdf
                                     )
                                     contador_exito += 1
                                 else:
@@ -208,7 +219,7 @@ class SyncAPIMiTienda:
             })
         return obj_producto
 
-    def buscar_venta(self, id, code, cliente_id, productos):
+    def buscar_venta(self, id, code, cliente_id, productos, pdf=None):
         domain = []
         operador = []
         if id:
@@ -226,7 +237,7 @@ class SyncAPIMiTienda:
                     'partner_id': cliente_id,
                     'mitienda_id': id,
                     'mitienda_code': code,
-                    'mitienda_sunat_pdf': False,
+                    'mitienda_sunat_pdf': pdf,
                     'order_line': [Command.create(linea) for linea in productos]
                 })
             except Exception as e:
