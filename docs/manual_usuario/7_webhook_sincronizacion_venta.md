@@ -46,7 +46,10 @@ A continuación se presenta un ejemplo de la estructura mínima de datos que deb
         "last_name": "Pérez",
         "email": "jperez@test.com",
         "phone_number": "56456456",
-        "doc_number": "9647695"
+        "doc_number": "9647695",
+        "e-billing": {
+            "url_pdf": "https://s3.amazonaws.com/mitiendape/uploads/tienda_12345/documentos/ordenes/BPP1-12345/BPP1-12345.pdf"
+        }
     },
     "customer": {
         "id": 43225,
