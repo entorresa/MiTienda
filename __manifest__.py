@@ -9,9 +9,9 @@
     'website': "https://www.dte.com.bo",
     'category': 'Sales/Sales',
 
-    'version': '3.0.0',
-    'development_status': 'Production/Stable',
-    'release': '',
+    'version': '3.0.1',
+    'development_status': 'Beta',
+    'release': 'rc1',
 
     'depends': ['base', 'sale_management'],
     'data': [
