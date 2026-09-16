@@ -15,4 +15,10 @@ class SaleOrder(models.Model):
     @api.depends('mitienda_serie','mitienda_correlative')
     def _compute_mitienda_nro_factura_sunat(self):
         for record in self:
-            record.mitienda_nro_factura_sunat = f"{mitienda_serie} - {mitienda_correlative}"
+            parte1 = record.mitienda_serie or ""
+            parte2 = record.mitienda_correlative or ""
+
+            if parte1 and parte2:
+                record.mitienda_nro_factura_sunat = f"{parte1} - {parte2}"
+            else:
+                record.mitienda_nro_factura_sunat = parte1 or parte2 or ""
