@@ -118,13 +118,18 @@ class SyncAPIMiTienda:
                                 )
                                 contador_error += 1
                             else:
-                                pdf = respuesta.get('data', {}).get('billing_info', {}).get('e-billing', {}).get('url_pdf', None)
+                                billing_info = respuesta.get('data', {}).get('billing_info', {}).get('e-billing', {})
+                                pdf = billing_info.get('url_pdf', None)
+                                serie = billing_info.get('serie', None)
+                                correlative = billing_info.get('correlative', None)
                                 obj_venta = self.buscar_venta(
                                     id=respuesta['data']['id'],
                                     code=respuesta['data']['code'],
                                     cliente_id=obj_cliente.id,
                                     productos=productos,
                                     pdf=pdf,
+                                    serie=serie,
+                                    correlative=correlative,
                                 )
                                 if obj_venta:
                                     # Registrar bitacora de ventas
