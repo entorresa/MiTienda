@@ -221,7 +221,7 @@ class SyncAPIMiTienda:
             })
         return obj_producto
 
-    def buscar_venta(self, id, code, cliente_id, productos, pdf=None):
+    def buscar_venta(self, id, code, cliente_id, productos, pdf=None, serie=None, correlative=None):
         domain = []
         operador = []
         if id:
@@ -240,7 +240,9 @@ class SyncAPIMiTienda:
                     'mitienda_id': id,
                     'mitienda_code': code,
                     'mitienda_sunat_pdf': pdf,
-                    'order_line': [Command.create(linea) for linea in productos]
+                    'mitienda_serie': serie,
+                    'mitienda_correlative': correlative,
+                    'order_line': [Command.create(linea) for linea in productos],
                 })
             except Exception as e:
                 _logger.error(str(e))
