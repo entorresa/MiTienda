@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="account_invoice_form_mitienda" model="ir.ui.view">
+        <field name="name">account.move.form.sin</field>
+        <field name="model">account.move</field>
+        <field name="priority">20</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//page[@name='other_info']" position="after">
+                    <page name="mitienda_pe" string="MiTienda.pe" invisible="move_type not in ['out_invoice', 'out_refund']">
+                        <group name="datos_tienda_pe">
+                            <field name="mitienda_id" readonly="1" widget="char"/>
+                            <field name="mitienda_code" readonly="1"/>
+                            <field name="mitienda_sunat_pdf" widget='url' readonly="1"/>
+                            <field name="mitienda_nro_factura_sunat" readonly="1"/>
+                        </group>
+                    </page>
+                </xpath>
+            </data>
+        </field>
+    </record>
+</odoo>
