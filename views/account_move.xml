@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <record id="account_invoice_form_mitienda" model="ir.ui.view">
-        <field name="name">account.move.form.sin</field>
+        <field name="name">account.move.form.mitienda</field>
         <field name="model">account.move</field>
         <field name="priority">20</field>
         <field name="inherit_id" ref="account.view_move_form"/>
