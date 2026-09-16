@@ -260,6 +260,15 @@ class SyncAPIMiTienda:
                     _logger.error('Error al confirmar venta: ' + obj_venta.name)
                 try:
                     factura = obj_venta._create_invoices()
+                    if factura:
+                        factura.write({
+                            'mitienda_id': id,
+                            'mitienda_code': code,
+                            'mitienda_sunat_pdf': pdf,
+                            'mitienda_serie': serie,
+                            'mitienda_correlative': correlative,
+                        })
+
                 except Exception as e:
                     _logger.error(str(e))
                     _logger.error('Error al registrar factura asociada a la venta: ' + obj_venta.name)
