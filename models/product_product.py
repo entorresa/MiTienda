@@ -42,7 +42,7 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    mitienda_id = fields.Integer(string='ID')
+    mitienda_id = fields.Integer(string='ID', copy=False)
     mitienda_sku = fields.Char(string='SKU', tracking=True, copy=False)
     mitienda_sincronizar_stock = fields.Boolean(string="Sincronizar stock", default=False, copy=False, tracking=True)
 
