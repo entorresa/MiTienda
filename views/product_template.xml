@@ -10,7 +10,7 @@
                     <page name="mitienda_pe" string="MiTienda.pe" invisible="product_variant_count &gt; 1">
                         <group>
                             <group name="datos_tienda_pe">
-                                <field name="mitienda_id" readonly="1" />
+                                <field name="mitienda_id" readonly="1" widget="char" />
                                 <field name="mitienda_sku" />
                                 <button name="verificar_sku" string="Verificar SKU"
                                     type="object" class="btn btn-primary">
@@ -43,7 +43,7 @@
                 <xpath expr="//sheet" position="inside">
                     <group>
                         <group name="datos_tienda_pe" string="MiTienda.pe">
-                            <field name="mitienda_id" readonly="1" />
+                            <field name="mitienda_id" readonly="1" widget="char" />
                             <field name="mitienda_sku" />
                         </group>
                     </group>

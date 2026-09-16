@@ -10,7 +10,7 @@
                     <page name="mitienda_pe" string="MiTienda.pe">
                         <group name="datos_tienda_pe">
                             <group>
-                                <field name="mitienda_id" invisible="1" />
+                                <field name="mitienda_id" invisible="1" widget="char" />
                                 <field name="mitienda_email" />
                             </group>
                             <group>
