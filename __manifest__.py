@@ -13,7 +13,7 @@
     'development_status': 'Beta',
     'release': 'rc1',
 
-    'depends': ['base', 'sale_management'],
+    'depends': ['base', 'sale_management', 'account'],
     'data': [
         'security/ir.model.access.csv',
         # ----------tablero---------
@@ -25,6 +25,7 @@
         'views/mitienda_pe_partner.xml',
         'views/mitienda_pe_sale_order.xml',
         'views/sale_order.xml',
+        'views/account_move.xml',
         'views/product_product.xml',
         'views/mitienda_pe_product.xml',
         # 'views/res_partner.xml',
