@@ -11,7 +11,7 @@
 
     'version': '3.0.1',
     'development_status': 'Beta',
-    'release': 'rc1',
+    'release': 'rc2',
 
     'depends': ['base', 'sale_management', 'account'],
     'data': [
