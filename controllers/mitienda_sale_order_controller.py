@@ -93,7 +93,7 @@ class MiTiendaSaleOrderController(http.Controller):
                             mitienda_partner_id = obj_bitacora_cliente.id,
                         )
                     else:
-                        obj_venta = sincronizacion.buscar_venta(id=body['id'], code=body['code'], cliente_id=obj_cliente.id, productos=productos)
+                        obj_venta = sincronizacion.buscar_venta(id=body['id'], code=body['code'], cliente_id=obj_cliente.id, productos=productos, fecha_venta=body.get('date_created'), fecha_pago=body.get('date_payment'))
                         if obj_venta:
                             # Registrar bitacora de ventas
                             sincronizacion.registrar_bitacora_venta(

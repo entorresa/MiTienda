@@ -10,6 +10,8 @@ class SaleOrder(models.Model):
     mitienda_serie = fields.Char(string="Serie", copy=False)
     mitienda_correlative = fields.Char(string="Correlativo", copy=False)
     mitienda_nro_factura_sunat = fields.Char(string="Nro. Factura SUNAT", compute="_compute_mitienda_nro_factura_sunat", store=False)
+    mitienda_fecha_venta = fields.Datetime(string="Fecha de venta", copy=False)
+    mitienda_fecha_pago = fields.Datetime(string="Fecha de pago", copy=False)
 
     @api.depends('mitienda_serie','mitienda_correlative')
     def _compute_mitienda_nro_factura_sunat(self):

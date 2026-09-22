@@ -26,6 +26,7 @@ class SyncAPIMiTienda:
             estado = True
             pagina = 1
             ventas_api_codes = []
+            ventas_api_fechas = {}
             conteo_requests = 0
             while estado:
                 respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, pagina=pagina)
@@ -39,6 +40,22 @@ class SyncAPIMiTienda:
                         obj_venta = self.env['sale.order'].search([('mitienda_code', '=', data['code'])])
                         if not obj_venta:
                             ventas_api_codes.append(data['code'])
+                            ventas_api_fechas[data['code']] = {
+                                'fecha_venta': data.get('date_created'),
+                                'fecha_pago': data.get('date_payment'),
+                            }
+                        else:
+                            # Venta ya sincronizada: completar fecha_venta/fecha_pago si faltan (backfill)
+                            vals = {}
+                            if not obj_venta.mitienda_fecha_venta and data.get('date_created'):
+                                vals['mitienda_fecha_venta'] = data.get('date_created')
+                            if not obj_venta.mitienda_fecha_pago and data.get('date_payment'):
+                                vals['mitienda_fecha_pago'] = data.get('date_payment')
+                            if vals:
+                                obj_venta.write(vals)
+                                obj_factura = self.env['account.move'].search([('mitienda_code', '=', data['code'])])
+                                if obj_factura:
+                                    obj_factura.write(vals)
                 if not respuesta['pagination']['next'] or len(respuesta['data']) == 0 or respuesta['pagination']['total'] == 0:
                     estado = False
                 pagina += 1
@@ -122,6 +139,7 @@ class SyncAPIMiTienda:
                                 pdf = billing_info.get('url_pdf', None)
                                 serie = billing_info.get('serie', None)
                                 correlative = billing_info.get('correlative', None)
+                                fechas = ventas_api_fechas.get(respuesta['data']['code'], {})
                                 obj_venta = self.buscar_venta(
                                     id=respuesta['data']['id'],
                                     code=respuesta['data']['code'],
@@ -130,6 +148,8 @@ class SyncAPIMiTienda:
                                     pdf=pdf,
                                     serie=serie,
                                     correlative=correlative,
+                                    fecha_venta=fechas.get('fecha_venta') or respuesta['data'].get('date_created'),
+                                    fecha_pago=fechas.get('fecha_pago'),
                                 )
                                 if obj_venta:
                                     # Registrar bitacora de ventas
@@ -221,7 +241,7 @@ class SyncAPIMiTienda:
             })
         return obj_producto
 
-    def buscar_venta(self, id, code, cliente_id, productos, pdf=None, serie=None, correlative=None):
+    def buscar_venta(self, id, code, cliente_id, productos, pdf=None, serie=None, correlative=None, fecha_venta=None, fecha_pago=None):
         domain = []
         operador = []
         if id:
@@ -242,6 +262,8 @@ class SyncAPIMiTienda:
                     'mitienda_sunat_pdf': pdf,
                     'mitienda_serie': serie,
                     'mitienda_correlative': correlative,
+                    'mitienda_fecha_venta': fecha_venta,
+                    'mitienda_fecha_pago': fecha_pago,
                     'order_line': [Command.create(linea) for linea in productos],
                 })
             except Exception as e:
@@ -267,6 +289,8 @@ class SyncAPIMiTienda:
                             'mitienda_sunat_pdf': pdf,
                             'mitienda_serie': serie,
                             'mitienda_correlative': correlative,
+                            'mitienda_fecha_venta': fecha_venta,
+                            'mitienda_fecha_pago': fecha_pago,
                         })
 
                 except Exception as e:

@@ -14,6 +14,8 @@
                             <field name="mitienda_code" readonly="1"/>
                             <field name="mitienda_sunat_pdf" widget='url' readonly="1"/>
                             <field name="mitienda_nro_factura_sunat" readonly="1"/>
+                            <field name="mitienda_fecha_venta" readonly="1"/>
+                            <field name="mitienda_fecha_pago" readonly="1"/>
                         </group>
                     </page>
                 </xpath>
