@@ -27,6 +27,7 @@ class SyncAPIMiTienda:
             pagina = 1
             ventas_api_codes = []
             ventas_api_fechas = {}
+            ventas_sin_sunat_codes = []
             conteo_requests = 0
             while estado:
                 respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, pagina=pagina)
@@ -45,21 +46,24 @@ class SyncAPIMiTienda:
                                 'fecha_pago': data.get('date_payment'),
                             }
                         else:
-                            # Venta ya sincronizada: completar fecha_venta/fecha_pago si faltan (backfill)
-                            vals = {}
-                            if not obj_venta.mitienda_fecha_venta and data.get('date_created'):
-                                vals['mitienda_fecha_venta'] = data.get('date_created')
-                            if not obj_venta.mitienda_fecha_pago and data.get('date_payment'):
-                                vals['mitienda_fecha_pago'] = data.get('date_payment')
-                            if vals:
-                                obj_venta.write(vals)
-                                obj_factura = self.env['account.move'].search([('mitienda_code', '=', data['code'])])
-                                if obj_factura:
-                                    obj_factura.write(vals)
+                            # Venta ya sincronizada: completar fecha_venta/fecha_pago y datos SUNAT si faltan (backfill)
+                            self.completar_datos_venta(obj_venta, data)
+                            if not obj_venta.mitienda_sunat_pdf and not obj_venta.mitienda_serie:
+                                ventas_sin_sunat_codes.append(data['code'])
                 if not respuesta['pagination']['next'] or len(respuesta['data']) == 0 or respuesta['pagination']['total'] == 0:
                     estado = False
                 pagina += 1
             # -------------------------------
+            # Ventas ya sincronizadas sin datos SUNAT: consultar el detalle para completarlos,
+            # sin exceder el límite de consultas reservado para las ventas nuevas
+            cupo_sunat = max(0, 90 - conteo_requests - len(ventas_api_codes))
+            for venta_code in ventas_sin_sunat_codes[:cupo_sunat]:
+                respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
+                conteo_requests += 1
+                if respuesta.get('success') is True and isinstance(respuesta.get('data'), dict):
+                    obj_venta = self.env['sale.order'].search([('mitienda_code', '=', venta_code)], limit=1)
+                    if obj_venta:
+                        self.completar_datos_venta(obj_venta, respuesta['data'])
             conteo_requests += len(ventas_api_codes)
             if conteo_requests > 100:
                 raise Exception(f'Límite de número de consultas excedido: {len(conteo_requests)}')
@@ -135,10 +139,7 @@ class SyncAPIMiTienda:
                                 )
                                 contador_error += 1
                             else:
-                                billing_info = respuesta.get('data', {}).get('billing_info', {}).get('e-billing', {})
-                                pdf = billing_info.get('url_pdf', None)
-                                serie = billing_info.get('serie', None)
-                                correlative = billing_info.get('correlative', None)
+                                pdf, serie, correlative = self.extraer_datos_sunat(respuesta['data'])
                                 fechas = ventas_api_fechas.get(respuesta['data']['code'], {})
                                 obj_venta = self.buscar_venta(
                                     id=respuesta['data']['id'],
@@ -240,6 +241,32 @@ class SyncAPIMiTienda:
                 'mitienda_id': id,
             })
         return obj_producto
+
+    def extraer_datos_sunat(self, data):
+        billing_info = (data or {}).get('billing_info') or {}
+        e_billing = billing_info.get('e-billing') or {}
+        return e_billing.get('url_pdf', None), e_billing.get('serie', None), e_billing.get('correlative', None)
+
+    def completar_datos_venta(self, obj_venta, data):
+        # Completa en la venta y su factura los datos de MiTienda que aún estén vacíos
+        pdf, serie, correlative = self.extraer_datos_sunat(data)
+        vals = {}
+        if not obj_venta.mitienda_fecha_venta and data.get('date_created'):
+            vals['mitienda_fecha_venta'] = data.get('date_created')
+        if not obj_venta.mitienda_fecha_pago and data.get('date_payment'):
+            vals['mitienda_fecha_pago'] = data.get('date_payment')
+        if not obj_venta.mitienda_sunat_pdf and pdf:
+            vals['mitienda_sunat_pdf'] = pdf
+        if not obj_venta.mitienda_serie and serie:
+            vals['mitienda_serie'] = serie
+        if not obj_venta.mitienda_correlative and correlative:
+            vals['mitienda_correlative'] = correlative
+        if vals:
+            obj_venta.write(vals)
+            obj_factura = self.env['account.move'].search([('mitienda_code', '=', obj_venta.mitienda_code)])
+            if obj_factura:
+                obj_factura.write(vals)
+        return vals
 
     def buscar_venta(self, id, code, cliente_id, productos, pdf=None, serie=None, correlative=None, fecha_venta=None, fecha_pago=None):
         domain = []
