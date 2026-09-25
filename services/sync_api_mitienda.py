@@ -27,7 +27,6 @@ class SyncAPIMiTienda:
             pagina = 1
             ventas_api_codes = []
             ventas_api_fechas = {}
-            ventas_sin_sunat_codes = []
             conteo_requests = 0
             while estado:
                 respuesta = RequestApiMiTienda(self.env).buscar_ventas(fecha_inicio=fecha_inicio, fecha_fin=fecha_fin, pagina=pagina)
@@ -48,14 +47,19 @@ class SyncAPIMiTienda:
                         else:
                             # Venta ya sincronizada: completar fecha_venta/fecha_pago y datos SUNAT si faltan (backfill)
                             self.completar_datos_venta(obj_venta, data)
-                            if not obj_venta.mitienda_sunat_pdf and not obj_venta.mitienda_serie:
-                                ventas_sin_sunat_codes.append(data['code'])
                 if not respuesta['pagination']['next'] or len(respuesta['data']) == 0 or respuesta['pagination']['total'] == 0:
                     estado = False
                 pagina += 1
             # -------------------------------
-            # Ventas ya sincronizadas sin datos SUNAT: consultar el detalle para completarlos,
-            # sin exceder el límite de consultas reservado para las ventas nuevas
+            # MiTienda emite el comprobante SUNAT días después de la venta, por lo que al sincronizarla
+            # "e-billing" suele venir vacío. Se vuelven a consultar las ventas de los últimos 30 días
+            # que aún no tienen datos SUNAT, sin exceder el límite de consultas reservado para las ventas nuevas
+            ventas_sin_sunat_codes = self.env['sale.order'].search([
+                ('mitienda_code', '!=', False),
+                ('mitienda_serie', '=', False),
+                ('mitienda_sunat_pdf', '=', False),
+                ('create_date', '>=', fields.Datetime.subtract(fields.Datetime.now(), days=30)),
+            ], order='id asc').mapped('mitienda_code')
             cupo_sunat = max(0, 90 - conteo_requests - len(ventas_api_codes))
             for venta_code in ventas_sin_sunat_codes[:cupo_sunat]:
                 respuesta = RequestApiMiTienda(self.env).buscar_venta(code=venta_code)
